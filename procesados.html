@@ -3,128 +3,174 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Artículos procesados</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Procesados</title>
+  <link rel="stylesheet" href="styles.css?v=20">
 </head>
-<body>
-  <nav class="nav">
-    <a href="index.html">Inicio</a>
-    <a class="active" href="procesados.html">Procesados</a>
-    <a href="no_procesados.html">No procesados</a>
-  </nav>
 
-  <main class="wrap">
-    <h1>Artículos procesados</h1>
+<body class="app-bg">
 
-    <div class="tabs">
-      <button data-estado="Vigente">Vigente</button>
-      <button data-estado="Vigente con observaciones">Vigente con observaciones</button>
-      <button data-estado="No clasificado">No clasificado</button>
-      <button data-estado="Refutado">Refutado</button>
+<header class="app-topbar">
+  <div class="app-topbar-inner">
+    <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
+    <nav class="app-topbar-nav">
+      <a class="navbtn" href="index.html">Inicio</a>
+      <a class="navbtn" href="procesados.html">Procesados</a>
+      <a class="navbtn" href="no_procesados.html">No procesados</a>
+      <a class="navbtn" href="#">Acerca de</a>
+    </nav>
+  </div>
+</header>
+
+<main class="app-shell">
+
+  <!-- Columna izquierda fija -->
+  <aside class="app-col app-left">
+    <h1 class="app-h1">Menú</h1>
+
+    <div class="app-stack">
+      <a class="btn2" href="procesados.html">Procesados</a>
+      <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
     </div>
 
-    <section id="list" class="grid"></section>
-    <p id="msg" class="msg"></p>
-  </main>
+    <div class="app-links">
+      <a href="index.html">Portada</a>
+      <a href="#">Protocolo editorial</a>
+      <a href="#">Normas de publicación</a>
+      <a href="#">Equipo editorial</a>
+      <a href="#">Contacto</a>
+    </div>
+  </aside>
 
-  <script>
-    const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
-    const SHEET_NAME = "Hoja 01";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  <!-- Columna central: contenido cambia -->
+  <section class="app-col app-mid">
 
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let inQuotes = false;
+    <div class="block">
+      <div class="blocktitle">Artículos procesados</div>
 
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i];
-        const n = text[i + 1];
+      <div class="tabs">
+        <button class="tabbtn active" data-estado="Vigente">Vigente</button>
+        <button class="tabbtn" data-estado="Vigente con observaciones">Vigente con observaciones</button>
+        <button class="tabbtn" data-estado="No clasificado">No clasificado</button>
+        <button class="tabbtn" data-estado="Refutado">Refutado</button>
+      </div>
 
-        if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
-        if (c === '"') { inQuotes = !inQuotes; continue; }
+      <div id="list" class="latest"></div>
+      <div id="msg" class="note"></div>
+    </div>
 
-        if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
-        if ((c === "\n" || c === "\r") && !inQuotes) {
-          if (c === "\r" && n === "\n") i++;
-          row.push(cur); cur = "";
-          if (row.some(x => x.trim() !== "")) rows.push(row);
-          row = [];
-          continue;
-        }
-        cur += c;
+  </section>
+
+  <!-- Columna derecha fija -->
+  <aside class="app-col app-right">
+    <div class="block">
+      <div class="blocktitle">Noticias</div>
+      <div class="app-links">
+        <a href="#" target="_blank" rel="noopener">Ciencia y tecnología</a>
+        <a href="#" target="_blank" rel="noopener">Eventos académicos</a>
+        <a href="#" target="_blank" rel="noopener">Convocatorias</a>
+        <a href="#" target="_blank" rel="noopener">Innovación</a>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<script>
+  const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+  const SHEET_NAME = "Hoja 01";
+  const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let cur = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const n = text[i + 1];
+
+      if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
+      if (c === '"') { inQuotes = !inQuotes; continue; }
+
+      if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
+      if ((c === "\n" || c === "\r") && !inQuotes) {
+        if (c === "\r" && n === "\n") i++;
+        row.push(cur); cur = "";
+        if (row.some(x => x.trim() !== "")) rows.push(row);
+        row = [];
+        continue;
       }
-      row.push(cur);
-      if (row.some(x => x.trim() !== "")) rows.push(row);
-
-      const headers = rows.shift().map(h => h.trim());
-      return rows.map(r => {
-        const obj = {};
-        headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
-        return obj;
-      });
+      cur += c;
     }
+    row.push(cur);
+    if (row.some(x => x.trim() !== "")) rows.push(row);
 
-    const list = document.getElementById("list");
-    const msg = document.getElementById("msg");
-
-    let all = [];
-    let estadoActual = "Vigente";
-
-    function norm(s) { return (s ?? "").trim(); }
-
-    function cardHTML(d) {
-      const id = norm(d["Identificador"]);
-      const autores = norm(d["Autores"]);
-      const anio = norm(d["Año"]);
-      const titulo = norm(d["Título"]) || norm(d["Titulo"]);
-      const rol = norm(d["Rol"]);
-      const estado = norm(d["Estado"]);
-
-      return `
-        <article class="card">
-          <div class="title">
-            <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
-          </div>
-          <div class="meta">
-            <div><b>Autores</b> ${autores}</div>
-            <div><b>Año</b> ${anio}</div>
-            <div><b>Rol</b> ${rol}</div>
-            <div><b>Estado</b> ${estado}</div>
-            <div><b>ID</b> ${id}</div>
-          </div>
-        </article>
-      `;
-    }
-
-    function render() {
-      const items = all.filter(d => norm(d["Estado"]) === estadoActual);
-      list.innerHTML = items.map(cardHTML).join("");
-      msg.textContent = items.length ? "" : "No hay documentos en esta categoría.";
-    }
-
-    document.querySelectorAll(".tabs button").forEach(b => {
-      b.addEventListener("click", () => {
-        estadoActual = b.dataset.estado;
-        render();
-      });
+    const headers = rows.shift().map(h => h.trim());
+    return rows.map(r => {
+      const obj = {};
+      headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
+      return obj;
     });
+  }
 
-    (async () => {
-      try {
-        const res = await fetch(CSV_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
-        const csv = await res.text();
-        all = parseCSV(csv);
+  function norm(s){ return (s ?? "").replace(/\s+/g," ").trim(); }
 
-        // diagnóstico mínimo visible si algo sale raro
-        if (!all.length) throw new Error("El CSV llegó vacío o no se pudo parsear.");
-        render();
-      } catch (e) {
-        msg.textContent = e.message;
-      }
-    })();
-  </script>
+  function cardHTML(d){
+    const id = norm(d["Identificador"]);
+    const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+    const autores = norm(d["Autores"]) || "-";
+    const anio = norm(d["Año"]) || "-";
+    const estado = norm(d["Estado"]) || "-";
+    const link = norm(d["LINK"]);
+
+    return `
+      <div class="item">
+        <div class="itemt">
+          <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
+        </div>
+        <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
+        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener">Abrir PDF</a></div>` : ""}
+      </div>
+    `;
+  }
+
+  const list = document.getElementById("list");
+  const msg = document.getElementById("msg");
+
+  let all = [];
+  let estadoActual = "Vigente";
+
+  function render(){
+    const items = all.filter(d => norm(d["Estado"]) === estadoActual);
+    list.innerHTML = items.map(cardHTML).join("");
+    msg.textContent = items.length ? "" : "No hay documentos en esta categoría.";
+  }
+
+  // tabs
+  document.querySelectorAll(".tabbtn").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      estadoActual = b.dataset.estado;
+      render();
+    });
+  });
+
+  (async () => {
+    try{
+      const res = await fetch(CSV_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
+      const csv = await res.text();
+      all = parseCSV(csv);
+
+      // por defecto muestra Vigente
+      render();
+    } catch(e){
+      msg.textContent = e.message;
+    }
+  })();
+</script>
+
 </body>
 </html>
