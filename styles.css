@@ -273,25 +273,25 @@ body{
 /* Texto secundario */
 .itemm,
 .note{
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
 /* Navegación superior */
 .navbtn{
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
 }
 
 /* Botones laterales */
 .btn2{
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 /* Links laterales */
 .app-links a{
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
 }
 
