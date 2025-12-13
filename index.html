@@ -4,192 +4,185 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Revista Estudiantil de Ingeniería</title>
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
+
 <body class="app-bg">
 
-  <!-- Barra superior fija -->
-  <header class="app-topbar">
-    <div class="app-topbar-inner">
-      <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
+<!-- Barra superior fija -->
+<header class="app-topbar">
+  <div class="app-topbar-inner">
+    <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
+    <nav class="app-topbar-nav">
+      <a class="navbtn" href="index.html">Inicio</a>
+      <a class="navbtn" href="procesados.html">Procesados</a>
+      <a class="navbtn" href="no_procesados.html">No procesados</a>
+      <a class="navbtn" href="#">Acerca de</a>
+    </nav>
+  </div>
+</header>
 
-      <nav class="app-topbar-nav">
-        <a class="navbtn" href="index.html">Inicio</a>
-        <a class="navbtn" href="procesados.html">Procesados</a>
-        <a class="navbtn" href="no_procesados.html">No procesados</a>
-        <a class="navbtn" href="about.html">Acerca de</a>
-      </nav>
+<!-- Layout principal -->
+<main class="app-shell">
+
+  <!-- Columna izquierda -->
+  <aside class="app-col app-left">
+    <h1 class="app-h1">Revista Estudiantil de Ingeniería</h1>
+
+    <div class="app-stack">
+      <a class="btn2" href="procesados.html">Procesados</a>
+      <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
     </div>
-  </header>
 
-  <!-- Layout 3 columnas con scroll interno -->
-  <main class="app-shell">
-    <!-- Izquierda -->
-    <aside class="app-col app-left">
-      <h1 class="app-h1">Revista Estudiantil de Ingeniería</h1>
+    <div class="app-links">
+      <a href="#">Protocolo editorial</a>
+      <a href="procesados.html">Estados editoriales</a>
+      <a href="no_procesados.html">Ingreso de trabajos</a>
+      <a href="#">Normas de publicación</a>
+      <a href="#">Equipo editorial</a>
+      <a href="#">Contacto</a>
+    </div>
+  </aside>
 
-      <div class="app-stack">
-        <a class="btn2" href="procesados.html">Procesados</a>
-        <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
+  <!-- Columna central -->
+  <section class="app-col app-mid">
+
+    <!-- Video -->
+    <div class="block">
+      <div class="blocktitle">Video</div>
+
+      <!-- Reemplace VIDEO_ID -->
+      <div class="video">
+        <iframe
+          src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&playsinline=1&rel=0"
+          title="Video institucional"
+          frameborder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
       </div>
 
+      <div class="note">
+        El video se reproduce automáticamente en modo silencioso.
+      </div>
+    </div>
+
+    <!-- Últimos artículos -->
+    <div class="block">
+      <div class="blocktitle">Últimos artículos</div>
+      <div id="latestList" class="latest"></div>
+      <div id="latestMsg" class="note"></div>
+    </div>
+
+  </section>
+
+  <!-- Columna derecha -->
+  <aside class="app-col app-right">
+    <div class="block">
+      <div class="blocktitle">Noticias</div>
       <div class="app-links">
-        <a href="about.html">Protocolo editorial</a>
-        <a href="procesados.html">Estados editoriales</a>
-        <a href="no_procesados.html">Ingreso de nuevos trabajos</a>
-        <a href="#">Normas de publicación</a>
-        <a href="#">Equipo editorial</a>
-        <a href="#">Contacto</a>
+        <a href="#" target="_blank">Ciencia y tecnología</a>
+        <a href="#" target="_blank">Eventos académicos</a>
+        <a href="#" target="_blank">Convocatorias estudiantiles</a>
+        <a href="#" target="_blank">Innovación y emprendimiento</a>
+        <a href="#" target="_blank">Seminarios y conferencias</a>
       </div>
-    </aside>
+    </div>
+  </aside>
 
-    <!-- Centro -->
-    <section class="app-col app-mid">
-      <div class="block">
-        <div class="blocktitle">Video</div>
+</main>
 
-        <!-- Reemplace VIDEO_ID por su ID real -->
-        <div class="video">
-          <iframe
-            src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&playsinline=1&rel=0"
-            title="Video"
-            frameborder="0"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowfullscreen></iframe>
-        </div>
+<script>
+/* ================= CONFIG ================= */
+const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+const SHEET_NAME = "Hoja 01";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-        <div class="note">YouTube suele requerir mute para permitir autoplay.</div>
+/* ================= UTILIDADES ================= */
+function norm(s){ return (s ?? "").replace(/\s+/g," ").trim(); }
+
+function parseCSV(text){
+  const rows=[], row=[]; let cur="", inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if(c=='"' && inQ && n=='"'){cur+='"';i++;continue;}
+    if(c=='"'){inQ=!inQ;continue;}
+    if(c=="," && !inQ){row.push(cur);cur="";continue;}
+    if((c=="\n"||c=="\r")&&!inQ){
+      if(c=="\r"&&n=="\n")i++;
+      row.push(cur);cur="";
+      if(row.some(x=>x.trim())) rows.push(row.splice(0));
+      continue;
+    }
+    cur+=c;
+  }
+  row.push(cur);
+  if(row.some(x=>x.trim())) rows.push(row);
+
+  const headers = rows.shift().map(h=>h.trim());
+  return rows.map(r=>{
+    const o={}; headers.forEach((h,i)=>o[h]=(r[i]||"").trim());
+    return o;
+  });
+}
+
+function parseDate(s){
+  const v=norm(s);
+  if(!v) return 0;
+  const t=Date.parse(v.length==4?`${v}-01-01`:v);
+  return isNaN(t)?0:t;
+}
+
+/* ================= LÓGICA ================= */
+function pickTop10(docs){
+  const order=["Vigente","Vigente con observaciones","No clasificado"];
+  const out=[];
+  for(const st of order){
+    docs
+      .filter(d=>norm(d.Estado)===st)
+      .sort((a,b)=>parseDate(b.Año)-parseDate(a.Año))
+      .forEach(d=>{ if(out.length<10) out.push(d); });
+    if(out.length>=10) break;
+  }
+  return out;
+}
+
+function renderItem(d){
+  const id=norm(d.Identificador);
+  const titulo=norm(d.Título)||norm(d.Titulo)||"Documento";
+  const autores=norm(d.Autores)||"-";
+  const anio=norm(d.Año)||"-";
+  const estado=norm(d.Estado)||"-";
+  return `
+    <div class="item">
+      <div class="itemt">
+        <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
       </div>
+      <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
+    </div>
+  `;
+}
 
-      <div class="block">
-        <div class="blocktitle">Últimos artículos</div>
-        <div id="latestList" class="latest"></div>
-        <div id="latestMsg" class="note"></div>
-      </div>
-    </section>
-
-    <!-- Derecha -->
-    <aside class="app-col app-right">
-      <div class="block">
-        <div class="blocktitle">Noticias</div>
-        <div class="app-links">
-          <a href="#" target="_blank" rel="noopener">Ciencia y tecnología</a>
-          <a href="#" target="_blank" rel="noopener">Eventos académicos</a>
-          <a href="#" target="_blank" rel="noopener">Convocatorias estudiantiles</a>
-          <a href="#" target="_blank" rel="noopener">Innovación y emprendimiento</a>
-          <a href="#" target="_blank" rel="noopener">Seminarios y conferencias</a>
-        </div>
-      </div>
-    </aside>
-  </main>
-
-  <script>
-    const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
-    const SHEET_NAME = "Hoja 01";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
-
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let inQuotes = false;
-
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i];
-        const n = text[i + 1];
-
-        if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
-        if (c === '"') { inQuotes = !inQuotes; continue; }
-
-        if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
-        if ((c === "\n" || c === "\r") && !inQuotes) {
-          if (c === "\r" && n === "\n") i++;
-          row.push(cur); cur = "";
-          if (row.some(x => x.trim() !== "")) rows.push(row);
-          row = [];
-          continue;
-        }
-        cur += c;
-      }
-      row.push(cur);
-      if (row.some(x => x.trim() !== "")) rows.push(row);
-
-      const headers = rows.shift().map(h => h.trim());
-      return rows.map(r => {
-        const obj = {};
-        headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
-        return obj;
-      });
+/* ================= INIT ================= */
+(async()=>{
+  const list=document.getElementById("latestList");
+  const msg=document.getElementById("latestMsg");
+  try{
+    const res=await fetch(CSV_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error("No se pudo leer el Google Sheet.");
+    const csv=await res.text();
+    const docs=parseCSV(csv);
+    const top=pickTop10(docs);
+    if(!top.length){
+      msg.textContent="No hay artículos disponibles.";
+      return;
     }
-
-    function norm(s){ return (s ?? "").replace(/\s+/g, " ").trim(); }
-
-    function parseYearOrDate(s){
-      const v = norm(s);
-      if (!v) return 0;
-      const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (m) return Date.parse(v) || 0;
-      const y = v.match(/^(\d{4})$/);
-      if (y) return Date.parse(`${v}-01-01`) || 0;
-      const t = Date.parse(v);
-      return isNaN(t) ? 0 : t;
-    }
-
-    function pickTop10(docs){
-      const order = ["Vigente", "Vigente con observaciones", "No clasificado"];
-      const out = [];
-      for (const st of order){
-        const group = docs
-          .filter(d => norm(d["Estado"]) === st)
-          .sort((a,b) => parseYearOrDate(b["Año"]) - parseYearOrDate(a["Año"]));
-        for (const d of group){
-          if (out.length >= 10) break;
-          out.push(d);
-        }
-        if (out.length >= 10) break;
-      }
-      return out;
-    }
-
-    function renderItem(d){
-      const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
-      const autores = norm(d["Autores"]) || "-";
-      const anio = norm(d["Año"]) || "-";
-      const estado = norm(d["Estado"]) || "-";
-      const id = norm(d["Identificador"]) || "-";
-      const link = norm(d["LINK"]);
-      const href = link ? link : "procesados.html";
-
-      return `
-        <div class="item">
-          <div class="itemt"><a href="${href}" target="${link ? "_blank" : "_self"}" rel="noopener">${titulo}</a></div>
-          <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
-        </div>
-      `;
-    }
-
-    (async () => {
-      const list = document.getElementById("latestList");
-      const msg = document.getElementById("latestMsg");
-      try{
-        const res = await fetch(CSV_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
-        const csv = await res.text();
-        const docs = parseCSV(csv);
-        const top = pickTop10(docs);
-
-        if (!top.length){
-          msg.textContent = "No existen artículos en Vigente, Vigente con observaciones o No clasificado.";
-          list.innerHTML = "";
-          return;
-        }
-        list.innerHTML = top.map(renderItem).join("");
-        msg.textContent = "";
-      } catch(e){
-        msg.textContent = e.message;
-      }
-    })();
-  </script>
+    list.innerHTML=top.map(renderItem).join("");
+  }catch(e){
+    msg.textContent=e.message;
+  }
+})();
+</script>
 
 </body>
 </html>
