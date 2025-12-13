@@ -55,14 +55,15 @@ a:hover{ text-decoration:underline; }
 
 
 .app-topbar-title{
-  font-weight:700;
-  white-space:nowrap;
-
-  /* caja discreta para legibilidad sobre imagen */
+  width: 100%;           /* Asegura que ocupe todo el ancho de la columna */
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;    /* Centrado horizontal del texto */
+  
   background:rgba(255,253,251,0.80);
-  border:1px solid rgba(232,212,198,0.85);
-  padding:6px 10px;
-  border-radius:6px;
+  border: 1px solid rgba(232,212,198,0.85);
+  padding: 8px 12px;
+  border-radius: 6px;
 }
 
 .app-topbar-nav{
