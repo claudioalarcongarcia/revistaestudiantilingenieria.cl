@@ -16,8 +16,8 @@
 const params = new URLSearchParams(window.location.search);
 const ID = params.get("id");
 
-const SHEET_ID = "SU_SHEET_ID";
-const SHEET_NAME = "hoja 01";
+const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+const SHEET_NAME = "Hoja 01";
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 fetch(CSV_URL)
