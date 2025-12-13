@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Procesados</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a class="active" href="procesados.html">Procesados</a>
+    <a href="no_procesados.html">No procesados</a>
+  </nav>
+
+  <main class="wrap">
+    <h1>Procesados</h1>
+
+    <div class="tabs">
+      <button data-estado="Vigente">Vigente</button>
+      <button data-estado="Vigente con observaciones">Vigente con observaciones</button>
+      <button data-estado="No clasificado">No clasificado</button>
+      <button data-estado="Refutado">Refutado</button>
+    </div>
+
+    <section id="list" class="grid"></section>
+    <p id="msg" class="msg"></p>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+    const list = document.getElementById("list");
+    const msg = document.getElementById("msg");
+    let all = [];
+    let estadoActual = "Vigente";
+
+    function render() {
+      const items = all
+        .filter(a => (a["Tipo"] || "").toLowerCase() === "procesado")
+        .filter(a => (a["Estado"] || "") === estadoActual);
+
+      list.innerHTML = items.map(cardHTML).join("");
+      msg.textContent = items.length ? "" : "No hay artículos en esta categoría.";
+    }
+
+    document.querySelectorAll(".tabs button").forEach(b => {
+      b.addEventListener("click", () => {
+        estadoActual = b.dataset.estado;
+        render();
+      });
+    });
+
+    loadArticles()
+      .then(data => { all = data; render(); })
+      .catch(e => { msg.textContent = e.message; });
+  </script>
+</body>
+</html>
