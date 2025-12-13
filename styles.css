@@ -304,3 +304,25 @@ body{
   }
 }
 
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin: 8px 0 12px 0;
+}
+
+.tabbtn{
+  padding:8px 10px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  background: var(--bg);
+  cursor:pointer;
+  font-size: 13px;
+}
+
+.tabbtn.active{
+  background: var(--panel);
+  border-color: var(--accent);
+}
+
+
