@@ -232,3 +232,73 @@ a:hover{ text-decoration:underline; }
     overflow:visible;
   }
 }
+
+/* lineas finales*/
+/* =============================
+   Tipografía estilo MDPI
+   ============================= */
+
+/* Texto base */
+body{
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Títulos principales */
+.app-topbar-title{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.app-h1{
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Títulos de bloque */
+.blocktitle{
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Títulos de artículos */
+.itemt{
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Texto secundario */
+.itemm,
+.note{
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Navegación superior */
+.navbtn{
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Botones laterales */
+.btn2{
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Links laterales */
+.app-links a{
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Evitar títulos exagerados en móvil */
+@media (max-width:980px){
+  body{
+    font-size: 14px;
+  }
+}
+
