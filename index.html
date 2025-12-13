@@ -4,108 +4,224 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Revista Estudiantil de Ingeniería</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
-<header class="site-header">
-  <div class="container header-row">
-    <div class="brand">
-      <div class="brand-title">Revista Estudiantil de Ingeniería</div>
-      <div class="brand-subtitle">Repositorio editorial con protocolo AG</div>
+  <!-- Fila superior centrada -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      Revista Estudiantil de Ingeniería
     </div>
+  </header>
 
-    <nav class="top-nav">
-      <a class="active" href="index.html">Inicio</a>
-      <a href="procesados.html">Procesados</a>
-      <a href="no_procesados.html">No procesados</a>
-      <a href="about.html">Acerca de</a>
-    </nav>
-  </div>
-</header>
+  <main class="page3col">
 
-<section class="hero">
-  <div class="container hero-grid">
-    <div class="hero-main">
-      <h1>Publicación y evaluación editorial con trazabilidad</h1>
-      <p class="lead">
-        Artículos procesados y no procesados. En procesados, cada documento puede quedar como vigente,
-        vigente con observaciones, no clasificado o refutado, siguiendo el flujo editorial definido.
-      </p>
+    <!-- Columna izquierda -->
+    <section class="col leftcol">
+      <h1 class="site-title">Revista Estudiantil de Ingeniería</h1>
 
-      <div class="hero-actions">
-        <a class="btn" href="procesados.html">Ver procesados</a>
-        <a class="btn btn-ghost" href="no_procesados.html">Ver no procesados</a>
-      </div>
-    </div>
-
-    <aside class="hero-side">
-      <div class="panel">
-        <div class="panel-title">Estado editorial</div>
-        <ul class="panel-list">
-          <li>Vigente</li>
-          <li>Vigente con observaciones</li>
-          <li>No clasificado</li>
-          <li>Refutado</li>
-        </ul>
+      <div class="left-actions">
+        <a class="btn" href="procesados.html">Procesados</a>
+        <a class="btn btn-ghost" href="no_procesados.html">No procesados</a>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">Datos mínimos por artículo</div>
-        <div class="panel-note">
-          Título, autores, año, DOI, link al PDF y estado. Gestión desde Google Sheets.
+      <div class="quicklinks">
+        <a href="about.html">Protocolo editorial</a>
+        <a href="procesados.html">Estados editoriales</a>
+        <a href="no_procesados.html">Ingreso de nuevos trabajos</a>
+        <a href="#">Normas de publicación</a>
+        <a href="#">Equipo editorial</a>
+        <a href="#">Contacto</a>
+      </div>
+    </section>
+
+    <!-- Columna central -->
+    <section class="col midcol">
+
+      <!-- Espacio para video -->
+      <div class="video-box">
+        <div class="video-title">Video</div>
+
+        <!-- Reemplace VIDEO_ID por su ID real de YouTube -->
+        <div class="video-embed">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&playsinline=1&rel=0"
+            title="Video"
+            frameborder="0"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="video-note">
+          Nota: YouTube suele exigir mute para permitir autoplay.
+        </div>
+      </div>
+
+      <!-- Últimos artículos vigentes (con fallback) -->
+      <div class="latest-box">
+        <div class="latest-title">Últimos artículos</div>
+        <div id="latestList" class="latest-list"></div>
+        <p id="latestMsg" class="msg"></p>
+      </div>
+
+    </section>
+
+    <!-- Columna derecha -->
+    <aside class="col rightcol">
+      <div class="news-box">
+        <div class="news-title">Noticias</div>
+        <div class="news-links">
+          <a href="#" target="_blank" rel="noopener">Noticias de ciencia y tecnología</a>
+          <a href="#" target="_blank" rel="noopener">Convocatorias estudiantiles</a>
+          <a href="#" target="_blank" rel="noopener">Eventos académicos</a>
+          <a href="#" target="_blank" rel="noopener">Conferencias y seminarios</a>
+          <a href="#" target="_blank" rel="noopener">Innovación y emprendimiento</a>
         </div>
       </div>
     </aside>
-  </div>
-</section>
 
-<main class="container">
-  <section class="section">
-    <div class="section-head">
-      <h2>Accesos rápidos</h2>
-      <p class="muted">Estructura simple, enfocada en lectura y trazabilidad.</p>
-    </div>
+  </main>
 
-    <div class="cards">
-      <a class="card" href="procesados.html">
-        <div class="card-title">Artículos procesados</div>
-        <div class="card-text">Filtrado por estado editorial y vista ordenada.</div>
-      </a>
+  <script>
+    // ====== CONFIG (su hoja de procesados) ======
+    const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+    const SHEET_NAME = "Hoja 01";
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-      <a class="card" href="no_procesados.html">
-        <div class="card-title">Artículos no procesados</div>
-        <div class="card-text">Entradas nuevas en espera de evaluación.</div>
-      </a>
+    // ====== CSV PARSER ROBUSTO ======
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let inQuotes = false;
 
-      <a class="card" href="about.html">
-        <div class="card-title">Protocolo editorial</div>
-        <div class="card-text">Descripción breve del criterio editorial y el flujo.</div>
-      </a>
-    </div>
-  </section>
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const n = text[i + 1];
 
-  <section class="section">
-    <div class="section-head">
-      <h2>Notas del editor</h2>
-      <p class="muted">Espacio para avisos, llamados, y cambios en el proceso.</p>
-    </div>
+        if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
+        if (c === '"') { inQuotes = !inQuotes; continue; }
 
-    <div class="notice">
-      <div class="notice-title">Sitio en construcción</div>
-      <div class="notice-text">
-        La prioridad actual es estabilizar la lectura desde Google Sheets y el filtrado por estado.
-      </div>
-    </div>
-  </section>
-</main>
+        if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
+        if ((c === "\n" || c === "\r") && !inQuotes) {
+          if (c === "\r" && n === "\n") i++;
+          row.push(cur); cur = "";
+          if (row.some(x => x.trim() !== "")) rows.push(row);
+          row = [];
+          continue;
+        }
+        cur += c;
+      }
+      row.push(cur);
+      if (row.some(x => x.trim() !== "")) rows.push(row);
 
-<footer class="site-footer">
-  <div class="container footer-row">
-    <div>© Revista Estudiantil de Ingeniería</div>
-    <div class="muted">GitHub Pages</div>
-  </div>
-</footer>
+      const headers = rows.shift().map(h => h.trim());
+      return rows.map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
+        return obj;
+      });
+    }
+
+    function norm(s){ return (s ?? "").replace(/\s+/g, " ").trim(); }
+
+    function parseYearOrDate(s){
+      const v = norm(s);
+      if (!v) return 0;
+
+      // si es YYYY-MM-DD
+      const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (m) return Date.parse(v) || 0;
+
+      // si es YYYY
+      const y = v.match(/^(\d{4})$/);
+      if (y) return Date.parse(`${v}-01-01`) || 0;
+
+      // fallback
+      const t = Date.parse(v);
+      return isNaN(t) ? 0 : t;
+    }
+
+    function pickTop10(docs){
+      const wanted = ["Vigente", "Vigente con observaciones", "No clasificado"];
+      const byStatus = status => docs
+        .filter(d => norm(d["Estado"]) === status)
+        .sort((a,b) => {
+          const ta = parseYearOrDate(a["Año"]);
+          const tb = parseYearOrDate(b["Año"]);
+          if (tb !== ta) return tb - ta;
+          return (norm(b["Identificador"]) > norm(a["Identificador"])) ? 1 : -1;
+        });
+
+      const out = [];
+      for (const st of wanted){
+        for (const d of byStatus(st)){
+          if (out.length >= 10) break;
+          out.push(d);
+        }
+        if (out.length >= 10) break;
+      }
+      return out;
+    }
+
+    function renderItem(d){
+      const id = norm(d["Identificador"]);
+      const titulo = norm(d["Título"]) || norm(d["Titulo"]);
+      const autores = norm(d["Autores"]);
+      const anio = norm(d["Año"]);
+      const estado = norm(d["Estado"]);
+      const link = norm(d["LINK"]);
+
+      const href = link ? link : "procesados.html"; // fallback seguro
+      return `
+        <article class="latest-item">
+          <div class="latest-item-title">
+            <a href="${href}" target="${link ? "_blank" : "_self"}" rel="noopener">
+              ${titulo || "Documento"}
+            </a>
+          </div>
+          <div class="latest-item-meta">
+            <span>${autores || "-"}</span>
+            <span>·</span>
+            <span>${anio || "-"}</span>
+            <span>·</span>
+            <span>${estado || "-"}</span>
+            <span>·</span>
+            <span>ID ${id || "-"}</span>
+          </div>
+        </article>
+      `;
+    }
+
+    (async () => {
+      const box = document.getElementById("latestList");
+      const msg = document.getElementById("latestMsg");
+
+      try{
+        const res = await fetch(CSV_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
+
+        const csv = await res.text();
+        const docs = parseCSV(csv);
+
+        const top = pickTop10(docs);
+
+        if (!top.length){
+          msg.textContent = "No existen artículos disponibles en los estados Vigente, Vigente con observaciones o No clasificado.";
+          box.innerHTML = "";
+          return;
+        }
+
+        box.innerHTML = top.map(renderItem).join("");
+        msg.textContent = "";
+
+      } catch(e){
+        msg.textContent = e.message;
+      }
+    })();
+  </script>
 
 </body>
 </html>
