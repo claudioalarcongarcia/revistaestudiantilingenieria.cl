@@ -2,52 +2,110 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Revista Estudiantil de Ingeniería</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Revista Estudiantil de Ingeniería. Publicación independiente de acceso abierto.">
+  <title>Revista Estudiantil de Ingeniería</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <header class="header">
-    <h1>Revista Estudiantil de Ingeniería</h1>
-    <p class="subtitle">
-      Publicación independiente de acceso abierto orientada a la difusión,
-      análisis y discusión de trabajos estudiantiles en ingeniería.
-    </p>
-  </header>
 
-  <main class="wrap">
-    <section class="entry">
-      <h2>Artículos no procesados</h2>
-      <p>
-        Manuscritos recibidos que aún no han sido sometidos a un proceso
-        editorial formal. Su inclusión no implica validación académica.
+<header class="site-header">
+  <div class="container header-row">
+    <div class="brand">
+      <div class="brand-title">Revista Estudiantil de Ingeniería</div>
+      <div class="brand-subtitle">Repositorio editorial con protocolo AG</div>
+    </div>
+
+    <nav class="top-nav">
+      <a class="active" href="index.html">Inicio</a>
+      <a href="procesados.html">Procesados</a>
+      <a href="no_procesados.html">No procesados</a>
+      <a href="about.html">Acerca de</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-main">
+      <h1>Publicación y evaluación editorial con trazabilidad</h1>
+      <p class="lead">
+        Artículos procesados y no procesados. En procesados, cada documento puede quedar como vigente,
+        vigente con observaciones, no clasificado o refutado, siguiendo el flujo editorial definido.
       </p>
-      <a class="btn primary" href="no_procesados.html">
-        Ver artículos no procesados
-      </a>
-    </section>
 
-    <section class="entry">
-      <h2>Artículos procesados</h2>
-      <p>
-        Artículos que han sido analizados editorialmente y clasificados según
-        su estado actual: vigentes, vigentes con observaciones, no clasificados
-        por pérdida de vigencia o refutados.
-      </p>
-      <a class="btn primary" href="procesados.html">
-        Ver artículos procesados
-      </a>
-    </section>
-  </main>
+      <div class="hero-actions">
+        <a class="btn" href="procesados.html">Ver procesados</a>
+        <a class="btn btn-ghost" href="no_procesados.html">Ver no procesados</a>
+      </div>
+    </div>
 
-  <footer class="footer">
-    <p>
-      Revista Estudiantil de Ingeniería · Acceso abierto ·
-      <a href="protocolo_ag.html">Protocolo AG</a> ·
-      <a href="contacto.html">Contacto</a>
-    </p>
-  </footer>
+    <aside class="hero-side">
+      <div class="panel">
+        <div class="panel-title">Estado editorial</div>
+        <ul class="panel-list">
+          <li>Vigente</li>
+          <li>Vigente con observaciones</li>
+          <li>No clasificado</li>
+          <li>Refutado</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Datos mínimos por artículo</div>
+        <div class="panel-note">
+          Título, autores, año, DOI, link al PDF y estado. Gestión desde Google Sheets.
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<main class="container">
+  <section class="section">
+    <div class="section-head">
+      <h2>Accesos rápidos</h2>
+      <p class="muted">Estructura simple, enfocada en lectura y trazabilidad.</p>
+    </div>
+
+    <div class="cards">
+      <a class="card" href="procesados.html">
+        <div class="card-title">Artículos procesados</div>
+        <div class="card-text">Filtrado por estado editorial y vista ordenada.</div>
+      </a>
+
+      <a class="card" href="no_procesados.html">
+        <div class="card-title">Artículos no procesados</div>
+        <div class="card-text">Entradas nuevas en espera de evaluación.</div>
+      </a>
+
+      <a class="card" href="about.html">
+        <div class="card-title">Protocolo editorial</div>
+        <div class="card-text">Descripción breve del criterio editorial y el flujo.</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Notas del editor</h2>
+      <p class="muted">Espacio para avisos, llamados, y cambios en el proceso.</p>
+    </div>
+
+    <div class="notice">
+      <div class="notice-title">Sitio en construcción</div>
+      <div class="notice-text">
+        La prioridad actual es estabilizar la lectura desde Google Sheets y el filtrado por estado.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <div>© Revista Estudiantil de Ingeniería</div>
+    <div class="muted">GitHub Pages</div>
+  </div>
+</footer>
+
 </body>
 </html>
