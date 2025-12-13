@@ -3,97 +3,151 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Artículos no procesados</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>No procesados</title>
+  <link rel="stylesheet" href="styles.css?v=21">
 </head>
-<body>
-  <nav class="nav">
-    <a href="index.html">Inicio</a>
-    <a href="procesados.html">Procesados</a>
-    <a class="active" href="no_procesados.html">No procesados</a>
-  </nav>
 
-  <main class="wrap">
-    <h1>Artículos no procesados</h1>
-    <section id="list" class="grid"></section>
-    <p id="msg" class="msg"></p>
-  </main>
+<body class="app-bg">
 
-  <script>
-    const SHEET_ID = "1qATJ1zbOpkvfCjJJDJShPq7SbxzUdlQQ3GuurtkmmVY";
-    const SHEET_NAME = "hoja 01"; // mismo nombre que usa en procesados
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+<header class="app-topbar">
+  <div class="app-topbar-inner">
+    <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
+    <nav class="app-topbar-nav">
+      <a class="navbtn" href="index.html">Inicio</a>
+      <a class="navbtn" href="procesados.html">Procesados</a>
+      <a class="navbtn" href="no_procesados.html">No procesados</a>
+      <a class="navbtn" href="#">Acerca de</a>
+    </nav>
+  </div>
+</header>
 
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let inQuotes = false;
+<main class="app-shell">
 
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i];
-        const n = text[i + 1];
+  <!-- Columna izquierda fija -->
+  <aside class="app-col app-left">
+    <h1 class="app-h1">Menú</h1>
 
-        if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
-        if (c === '"') { inQuotes = !inQuotes; continue; }
+    <div class="app-stack">
+      <a class="btn2" href="procesados.html">Procesados</a>
+      <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
+    </div>
 
-        if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
-        if ((c === "\n" || c === "\r") && !inQuotes) {
-          if (c === "\r" && n === "\n") i++;
-          row.push(cur); cur = "";
-          if (row.some(x => x.trim() !== "")) rows.push(row);
-          row = [];
-          continue;
-        }
-        cur += c;
+    <div class="app-links">
+      <a href="index.html">Portada</a>
+      <a href="#">Protocolo editorial</a>
+      <a href="#">Normas de publicación</a>
+      <a href="#">Equipo editorial</a>
+      <a href="#">Contacto</a>
+    </div>
+  </aside>
+
+  <!-- Columna central: contenido cambia -->
+  <section class="app-col app-mid">
+    <div class="block">
+      <div class="blocktitle">Artículos no procesados</div>
+
+      <div id="list" class="latest"></div>
+      <div id="msg" class="note"></div>
+    </div>
+  </section>
+
+  <!-- Columna derecha fija -->
+  <aside class="app-col app-right">
+    <div class="block">
+      <div class="blocktitle">Noticias</div>
+      <div class="app-links">
+        <a href="#" target="_blank" rel="noopener">Ciencia y tecnología</a>
+        <a href="#" target="_blank" rel="noopener">Eventos académicos</a>
+        <a href="#" target="_blank" rel="noopener">Convocatorias</a>
+        <a href="#" target="_blank" rel="noopener">Innovación</a>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<script>
+  /* ====== CONFIG: Sheet de NO PROCESADOS ====== */
+  const SHEET_ID = "1qATJ1zbOpkvfCjJJDJShPq7SbxzUdlQQ3GuurtkmmVY";
+  const SHEET_NAME = "Hoja 01";
+  const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let cur = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const n = text[i + 1];
+
+      if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
+      if (c === '"') { inQuotes = !inQuotes; continue; }
+
+      if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
+      if ((c === "\n" || c === "\r") && !inQuotes) {
+        if (c === "\r" && n === "\n") i++;
+        row.push(cur); cur = "";
+        if (row.some(x => x.trim() !== "")) rows.push(row);
+        row = [];
+        continue;
       }
-      row.push(cur);
-      if (row.some(x => x.trim() !== "")) rows.push(row);
-
-      const headers = rows.shift().map(h => h.trim());
-      return rows.map(r => {
-        const obj = {};
-        headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
-        return obj;
-      });
+      cur += c;
     }
+    row.push(cur);
+    if (row.some(x => x.trim() !== "")) rows.push(row);
 
-    function cardHTML(a) {
-      const id = a["Identificador"] || "";
-      const nombre = a["Nombre"] || "";
-      const autores = a["Autores"] || "";
-      const anio = a["Año"] || "";
-      const doi = a["DOI"] || "";
+    const headers = rows.shift().map(h => h.trim());
+    return rows.map(r => {
+      const obj = {};
+      headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
+      return obj;
+    });
+  }
 
-      return `
-        <article class="card">
-          <div class="title">${nombre}</div>
-          <div class="meta">
-            <div><b>Identificador</b> ${id}</div>
-            <div><b>Autores</b> ${autores}</div>
-            <div><b>Año</b> ${anio}</div>
-            <div><b>DOI</b> ${doi}</div>
-          </div>
-        </article>
-      `;
-    }
+  function norm(s){ return (s ?? "").replace(/\s+/g," ").trim(); }
 
-    (async () => {
-      const list = document.getElementById("list");
-      const msg = document.getElementById("msg");
+  function cardHTML(d){
+    const id = norm(d["Identificador"]);
+    const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+    const autores = norm(d["Autores"]) || "-";
+    const anio = norm(d["Año"]) || "-";
+    const estado = norm(d["Estado"]) || "No procesado";
+    const link = norm(d["LINK"]);
 
-      try {
-        const res = await fetch(CSV_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("No se pudo leer el Google Sheet (verifique permisos y nombre de hoja).");
-        const csv = await res.text();
-        const items = parseCSV(csv);
+    return `
+      <div class="item">
+        <div class="itemt">${titulo}</div>
+        <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
+        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener">Abrir archivo</a></div>` : ""}
+      </div>
+    `;
+  }
 
-        list.innerHTML = items.map(cardHTML).join("");
-        msg.textContent = items.length ? "" : "No hay artículos no procesados para mostrar.";
-      } catch (e) {
-        msg.textContent = e.message;
+  const list = document.getElementById("list");
+  const msg = document.getElementById("msg");
+
+  (async () => {
+    try{
+      const res = await fetch(CSV_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
+      const csv = await res.text();
+      const all = parseCSV(csv);
+
+      if (!all.length){
+        msg.textContent = "No hay documentos no procesados.";
+        list.innerHTML = "";
+        return;
       }
-    })();
-  </script>
+
+      list.innerHTML = all.map(cardHTML).join("");
+      msg.textContent = "";
+    } catch(e){
+      msg.textContent = e.message;
+    }
+  })();
+</script>
+
 </body>
 </html>
