@@ -1,173 +1,233 @@
-/* ===== Shell fijo tipo LinkedIn ===== */
+:root{
+  /* Paleta editorial pastel */
+  --bg:#ffffff;
+  --section:#f3f6f4;
+  --panel:#eef2ef;
+  --line:#dde3df;
+  --ink:#1f2a24;
+  --muted:#5f6f66;
+  --accent:#4f6f64;
+  --accent-hover:#435f56;
+}
 
-.app-bg{ background: var(--section); }
+/* ===== Reset mínimo ===== */
+*{ box-sizing:border-box }
 
+body{
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:var(--section);
+  color:var(--ink);
+  line-height:1.55;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+a:hover{ text-decoration:underline; }
+
+/* ===== Barra superior fija ===== */
 .app-topbar{
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
+
+  background-image: url("assets/topbar-bg.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+  border-bottom:1px solid var(--line);
 }
 
 .app-topbar-inner{
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  max-width:1100px;
+  margin:0 auto;
+  padding:10px 16px;
+  min-height:70px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
 }
 
 .app-topbar-title{
-  font-weight: 700;
-  white-space: nowrap;
+  font-weight:700;
+  white-space:nowrap;
+  background:rgba(255,255,255,0.75);
+  padding:6px 10px;
+  border-radius:10px;
 }
 
 .app-topbar-nav{
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 .navbtn{
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: var(--panel);
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.8);
 }
 .navbtn:hover{
-  text-decoration: none;
-  background: #fff;
+  background:#fff;
+  text-decoration:none;
 }
 
+/* ===== Shell principal ===== */
 .app-shell{
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 16px;
-  padding-top: 68px; /* espacio para topbar fija */
-  display: grid;
-  grid-template-columns: 1fr 1.6fr 1fr;
-  gap: 16px;
-  height: 100vh;
+  max-width:1100px;
+  margin:0 auto;
+  padding:16px;
+  padding-top:70px;   /* espacio exacto para la topbar */
+  height:100vh;
+
+  display:grid;
+  grid-template-columns:1fr 1.6fr 1fr;
+  gap:16px;
 }
 
+/* ===== Columnas ===== */
 .app-col{
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
-  overflow: auto;      /* scroll interno por columna */
-  min-height: 0;       /* importante para scroll interno */
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+
+  overflow:auto;      /* scroll interno */
+  min-height:0;
 }
 
+/* ===== Columna izquierda ===== */
 .app-h1{
-  margin: 0 0 12px 0;
-  font-size: 18px;
+  margin:0 0 12px 0;
+  font-size:18px;
 }
 
 .app-stack{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:14px;
 }
 
 .btn2{
-  display: block;
-  text-align: center;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: #fff;
-  border: 1px solid var(--accent);
+  display:block;
+  text-align:center;
+  padding:10px 12px;
+  border-radius:12px;
+  background:var(--accent);
+  color:#fff;
+  border:1px solid var(--accent);
 }
 .btn2:hover{
-  text-decoration: none;
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+  background:var(--accent-hover);
+  border-color:var(--accent-hover);
+  text-decoration:none;
 }
 
 .btn2.ghost{
-  background: #fff;
-  color: var(--accent);
-  border: 1px solid var(--line);
+  background:#fff;
+  color:var(--accent);
+  border:1px solid var(--line);
 }
 .btn2.ghost:hover{
-  background: var(--panel);
+  background:var(--panel);
 }
 
 .app-links{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
 .app-links a{
-  padding: 9px 10px;
-  border-radius: 12px;
-  background: var(--panel);
-  border: 1px solid var(--line);
+  padding:9px 10px;
+  border-radius:12px;
+  background:var(--panel);
+  border:1px solid var(--line);
 }
 .app-links a:hover{
-  text-decoration: none;
-  background: #fff;
+  background:#fff;
+  text-decoration:none;
 }
 
+/* ===== Bloques centrales ===== */
 .block{
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  margin-bottom: 12px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:12px;
 }
 
 .blocktitle{
-  font-weight: 700;
-  margin-bottom: 10px;
+  font-weight:700;
+  margin-bottom:10px;
 }
 
+/* ===== Video ===== */
 .video{
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: #000;
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:#000;
 }
 .video iframe{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
 }
 
-.latest{ display: flex; flex-direction: column; gap: 10px; }
+/* ===== Listado de artículos ===== */
+.latest{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 
 .item{
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 10px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
 }
-.itemt{ font-weight: 700; margin-bottom: 6px; }
-.itemm{ color: var(--muted); font-size: 13px; }
 
-.note{ color: var(--muted); font-size: 13px; margin-top: 8px; }
+.itemt{
+  font-weight:700;
+  margin-bottom:6px;
+}
 
-/* Móvil: una sola columna, scroll normal */
-@media (max-width: 980px){
+.itemm{
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* ===== Notas ===== */
+.note{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:8px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width:980px){
   .app-shell{
-    grid-template-columns: 1fr;
-    height: auto;
-    padding-top: 68px;
+    grid-template-columns:1fr;
+    height:auto;
+    padding-top:70px;
   }
   .app-col{
-    overflow: visible;
+    overflow:visible;
   }
 }
