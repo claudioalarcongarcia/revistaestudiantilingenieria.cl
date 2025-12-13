@@ -2,73 +2,174 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artículo</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="procesados.html">Procesados</a>
+    <a href="no_procesados.html">No procesados</a>
+  </nav>
 
-<div id="articulo"></div>
-<hr>
-<h2>Análisis</h2>
-<div id="analisis"></div>
+  <main class="wrap">
+    <section id="main"></section>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const ID = params.get("id");
+    <h2>Análisis</h2>
+    <section id="analisis" class="grid"></section>
+    <p id="msg" class="msg"></p>
+  </main>
 
-const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
-const SHEET_NAME = "Hoja 01";
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ID = (params.get("id") || "").trim();
 
-fetch(CSV_URL)
-  .then(r => r.text())
-  .then(csv => {
-    const rows = csv.split("\n").map(r => r.split(","));
-    const headers = rows.shift();
+    const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+    const SHEET_NAME = "Hoja 01";
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-    const docs = rows.map(r => {
-      const o = {};
-      headers.forEach((h,i)=>o[h.trim()] = (r[i]||"").trim());
-      return o;
-    });
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let inQuotes = false;
 
-    const doc = docs.find(d => d.Identificador === ID);
-    if (!doc) return;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const n = text[i + 1];
 
-    // Artículo principal
-    document.getElementById("articulo").innerHTML = `
-      <h1>${doc.Título}</h1>
-      <p><b>Autores:</b> ${doc.Autores}</p>
-      <p><b>Año:</b> ${doc.Año}</p>
-      <p><b>Rol:</b> ${doc.Rol}</p>
-      <p><b>Estado:</b> ${doc.Estado}</p>
-      <p><b>DOI:</b> ${doc.DOI || "-"}</p>
-      <p><a href="${doc.LINK}" target="_blank">Ver PDF</a></p>
-    `;
+        if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
+        if (c === '"') { inQuotes = !inQuotes; continue; }
 
-    // Análisis = documentos que lo citan
-    const citantes = docs.filter(d => {
-      if (!d.Citas_internas) return false;
-      return d.Citas_internas
-        .split(",")
-        .map(x => x.trim())
-        .includes(ID);
-    });
+        if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
+        if ((c === "\n" || c === "\r") && !inQuotes) {
+          if (c === "\r" && n === "\n") i++;
+          row.push(cur); cur = "";
+          if (row.some(x => x.trim() !== "")) rows.push(row);
+          row = [];
+          continue;
+        }
+        cur += c;
+      }
+      row.push(cur);
+      if (row.some(x => x.trim() !== "")) rows.push(row);
 
-    document.getElementById("analisis").innerHTML =
-      citantes.length
-        ? citantes.map(d => `
-            <div class="card">
-              <a href="articulo.html?id=${d.Identificador}">
-                ${d.Título}
-              </a>
-              <div>${d.Autores}</div>
-              <div>${d.Año} · ${d.Rol}</div>
-            </div>
-          `).join("")
-        : "<p>No existen análisis registrados.</p>";
-  });
-</script>
+      const headers = rows.shift().map(h => h.trim());
+      return rows.map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
+        return obj;
+      });
+    }
 
+    function norm(s) { return (s ?? "").replace(/\s+/g, " ").trim(); }
+
+    function parseCitas(s) {
+      // acepta vacío, "100001,100002", "100001, 100002"
+      const raw = norm(s);
+      if (!raw) return [];
+      return raw.split(",").map(x => x.trim()).filter(Boolean);
+    }
+
+    function escapeHTML(str) {
+      return (str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderMain(d) {
+      const id = norm(d["Identificador"]);
+      const autores = escapeHTML(norm(d["Autores"]));
+      const anio = escapeHTML(norm(d["Año"]));
+      const titulo = escapeHTML(norm(d["Título"]) || norm(d["Titulo"]));
+      const rol = escapeHTML(norm(d["Rol"]));
+      const estado = escapeHTML(norm(d["Estado"]));
+      const doi = escapeHTML(norm(d["DOI"]));
+      const link = norm(d["LINK"]);
+
+      document.title = titulo ? `${titulo}` : "Artículo";
+
+      return `
+        <h1>${titulo || "Documento"}</h1>
+        <div class="meta">
+          <div><b>Identificador</b> ${escapeHTML(id)}</div>
+          <div><b>Autores</b> ${autores || "-"}</div>
+          <div><b>Año</b> ${anio || "-"}</div>
+          <div><b>Rol</b> ${rol || "-"}</div>
+          <div><b>Estado</b> ${estado || "-"}</div>
+          <div><b>DOI</b> ${doi || "-"}</div>
+          ${link ? `<div><a href="${link}" target="_blank" rel="noopener">Abrir documento</a></div>` : ""}
+        </div>
+      `;
+    }
+
+    function renderCard(d) {
+      const id = norm(d["Identificador"]);
+      const autores = escapeHTML(norm(d["Autores"]));
+      const anio = escapeHTML(norm(d["Año"]));
+      const titulo = escapeHTML(norm(d["Título"]) || norm(d["Titulo"]));
+      const rol = escapeHTML(norm(d["Rol"]));
+
+      return `
+        <article class="card">
+          <div class="title">
+            <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
+          </div>
+          <div class="meta">
+            <div><b>Autores</b> ${autores || "-"}</div>
+            <div><b>Año</b> ${anio || "-"}</div>
+            <div><b>Rol</b> ${rol || "-"}</div>
+            <div><b>ID</b> ${escapeHTML(id)}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    (async () => {
+      const main = document.getElementById("main");
+      const analisis = document.getElementById("analisis");
+      const msg = document.getElementById("msg");
+
+      if (!ID) {
+        msg.textContent = "Falta el parámetro id. Ejemplo: articulo.html?id=100001";
+        return;
+      }
+
+      try {
+        const res = await fetch(CSV_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
+
+        const csv = await res.text();
+        const docs = parseCSV(csv);
+
+        const doc = docs.find(d => norm(d["Identificador"]) === ID);
+        if (!doc) {
+          msg.textContent = `No se encontró el documento con Identificador ${ID}.`;
+          return;
+        }
+
+        main.innerHTML = renderMain(doc);
+
+        // "Análisis" = documentos que CITAN a este ID en Citas_internas
+        const citantes = docs.filter(d => parseCitas(d["Citas_internas"]).includes(ID));
+
+        if (!citantes.length) {
+          analisis.innerHTML = "";
+          msg.textContent = "No existen documentos citantes registrados.";
+          return;
+        }
+
+        analisis.innerHTML = citantes.map(renderCard).join("");
+        msg.textContent = "";
+
+      } catch (e) {
+        msg.textContent = e.message;
+      }
+    })();
+  </script>
 </body>
 </html>
