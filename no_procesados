@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>No procesados</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="procesados.html">Procesados</a>
+    <a class="active" href="no_procesados.html">No procesados</a>
+  </nav>
+
+  <main class="wrap">
+    <h1>No procesados</h1>
+    <section id="list" class="grid"></section>
+    <p id="msg" class="msg"></p>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+    const list = document.getElementById("list");
+    const msg = document.getElementById("msg");
+
+    loadArticles()
+      .then(all => {
+        const items = all.filter(a => (a["Tipo"] || "").toLowerCase() === "no procesado");
+        list.innerHTML = items.map(cardHTML).join("");
+        msg.textContent = items.length ? "" : "No hay artículos no procesados.";
+      })
+      .catch(e => { msg.textContent = e.message; });
+  </script>
+</body>
+</html>
