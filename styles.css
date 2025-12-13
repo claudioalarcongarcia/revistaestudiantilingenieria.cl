@@ -1,274 +1,136 @@
-:root{
-  /* Paleta editorial pastel */
-  --bg:#ffffff;
-  --section:#f3f6f4;
-  --panel:#eef2ef;
-  --line:#dde3df;
-  --ink:#1f2a24;
-  --muted:#5f6f66;
-  --accent:#4f6f64;
-  --accent-hover:#435f56;
-}
+/* ===== Layout 3 columnas + topbar centrado ===== */
 
-/* Reset mínimo */
-*{ box-sizing:border-box }
-
-body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-  line-height:1.55;
+.topbar{
+  background:#ffffff;
+  border-bottom:1px solid var(--line);
 }
-
-/* Links */
-a{
-  color:inherit;
-  text-decoration:none;
-}
-a:hover{
-  text-decoration:underline;
-}
-
-/* Contenedor central */
-.container,
-.wrap{
+.topbar-inner{
   max-width:1100px;
   margin:0 auto;
-  padding:0 16px;
-}
-
-/* ================= HEADER ================= */
-
-.site-header{
-  background:#fff;
-  border-bottom:1px solid var(--line);
-}
-
-.header-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:16px;
-  padding:16px 0;
-}
-
-.brand-title{
+  padding:14px 16px;
+  text-align:center;
   font-weight:700;
-  font-size:18px;
-}
-.brand-subtitle{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:4px;
 }
 
-.top-nav{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.top-nav a{
-  padding:8px 10px;
-  border-radius:8px;
-  border:1px solid transparent;
-}
-.top-nav a.active{
-  background:var(--panel);
-  border-color:var(--line);
-}
-
-/* ================= HERO ================= */
-
-.hero{
-  background:var(--section);
-  border-bottom:1px solid var(--line);
-}
-
-.hero-grid{
+.page3col{
+  max-width:1100px;
+  margin:0 auto;
+  padding:18px 16px 28px 16px;
   display:grid;
-  grid-template-columns:1.6fr 1fr;
-  gap:20px;
-  padding:24px 0;
+  grid-template-columns: 1fr 1.6fr 1fr;
+  gap:16px;
+  background:var(--section);
 }
 
-.hero h1{
-  margin:0 0 10px 0;
-  font-size:28px;
-  line-height:1.25;
-}
-
-.lead{
-  margin:0 0 16px 0;
-  color:var(--muted);
-}
-
-.hero-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-/* ================= BOTONES ================= */
-
-.btn{
-  display:inline-block;
-  padding:10px 16px;
-  border-radius:10px;
-  background:var(--accent);
-  color:#fff;
-  border:1px solid var(--accent);
-}
-.btn:hover{
-  background:var(--accent-hover);
-  border-color:var(--accent-hover);
-  text-decoration:none;
-}
-
-.btn-ghost{
-  background:transparent;
-  color:var(--accent);
-  border:1px solid var(--line);
-}
-.btn-ghost:hover{
-  background:var(--panel);
-  text-decoration:none;
-}
-
-/* ================= PANELES ================= */
-
-.panel{
+.col{
   background:var(--panel);
   border:1px solid var(--line);
   border-radius:12px;
   padding:14px;
+}
+
+/* Columna izquierda */
+.site-title{
+  margin:0 0 12px 0;
+  font-size:18px;
+}
+.left-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:14px;
+}
+.quicklinks{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.quicklinks a{
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+}
+.quicklinks a:hover{
+  text-decoration:none;
+  background:var(--panel);
+}
+
+/* Columna central: video + lista */
+.video-box, .latest-box, .news-box{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
   margin-bottom:12px;
 }
-
-.panel-title{
+.video-title, .latest-title, .news-title{
   font-weight:700;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
-
-.panel-list{
-  margin:0;
-  padding-left:18px;
+.video-embed{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid var(--line);
+}
+.video-embed iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.video-note{
+  margin-top:8px;
+  font-size:13px;
   color:var(--muted);
 }
 
-.panel-note{
-  font-size:14px;
-  color:var(--muted);
+.latest-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
-
-/* ================= SECCIONES ================= */
-
-.section{
-  background:var(--section);
-  padding:22px 0;
-  margin-bottom:20px;
-}
-
-.section-head h2{
-  margin:0 0 6px 0;
-  font-size:18px;
-}
-
-.muted{
-  color:var(--muted);
-}
-
-/* ================= CARDS ================= */
-
-.cards,
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin-top:14px;
-}
-
-.card{
-  background:var(--panel);
+.latest-item{
   border:1px solid var(--line);
   border-radius:12px;
-  padding:14px;
+  padding:10px;
+  background:var(--panel);
+}
+.latest-item-title{
+  font-weight:700;
+  margin-bottom:6px;
+}
+.latest-item-title a:hover{ text-decoration:underline; }
+.latest-item-meta{
+  font-size:13px;
+  color:var(--muted);
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
 }
 
-.card:hover{
-  border-color:#cfd6d1;
+/* Columna derecha: noticias */
+.news-links{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.news-links a{
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--panel);
+}
+.news-links a:hover{
+  background:#fff;
   text-decoration:none;
 }
 
-.card-title,
-.title{
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.card-text{
-  font-size:14px;
-  color:var(--muted);
-}
-
-.meta{
-  font-size:14px;
-  color:var(--ink);
-}
-.meta div{
-  margin-bottom:4px;
-}
-
-/* ================= AVISOS ================= */
-
-.notice{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:14px;
-}
-
-.notice-title{
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.notice-text{
-  color:var(--muted);
-}
-
-/* ================= MENSAJES ================= */
-
-.msg{
-  margin-top:12px;
-  color:var(--muted);
-  font-size:14px;
-}
-
-/* ================= FOOTER ================= */
-
-.site-footer{
-  background:#fff;
-  border-top:1px solid var(--line);
-  padding:14px 0;
-}
-
-.footer-row{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  font-size:14px;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width:900px){
-  .hero-grid{
-    grid-template-columns:1fr;
-  }
-  .cards,
-  .grid{
-    grid-template-columns:1fr;
+@media (max-width: 980px){
+  .page3col{
+    grid-template-columns: 1fr;
   }
 }
