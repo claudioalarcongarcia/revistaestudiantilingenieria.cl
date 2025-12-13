@@ -4,21 +4,77 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artículo</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
-<body>
-  <nav class="nav">
-    <a href="index.html">Inicio</a>
-    <a href="procesados.html">Procesados</a>
-    <a href="no_procesados.html">No procesados</a>
-  </nav>
+<body class="app-bg">
 
-  <main class="wrap">
-    <section id="main"></section>
+  <!-- Barra superior fija -->
+  <header class="app-topbar">
+    <div class="app-topbar-inner">
+      <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
+      <nav class="app-topbar-nav">
+        <a class="navbtn" href="index.html">Inicio</a>
+        <a class="navbtn" href="procesados.html">Procesados</a>
+        <a class="navbtn" href="no_procesados.html">No procesados</a>
+        <a class="navbtn" href="about.html">Acerca de</a>
+      </nav>
+    </div>
+  </header>
 
-    <h2>Análisis</h2>
-    <section id="analisis" class="grid"></section>
-    <p id="msg" class="msg"></p>
+  <main class="app-shell">
+
+    <!-- Izquierda (igual que index) -->
+    <aside class="app-col app-left">
+      <h1 class="app-h1">Revista Estudiantil de Ingeniería</h1>
+
+      <div class="app-stack">
+        <a class="btn2" href="procesados.html">Procesados</a>
+        <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
+      </div>
+
+      <div class="app-links">
+        <a href="about.html">Protocolo editorial</a>
+        <a href="procesados.html">Estados editoriales</a>
+        <a href="no_procesados.html">Ingreso de nuevos trabajos</a>
+        <a href="index.html">Portada</a>
+      </div>
+    </aside>
+
+    <!-- Centro: detalle del artículo -->
+    <section class="app-col app-mid">
+      <div class="block">
+        <div class="blocktitle">Artículo</div>
+        <div id="articleBox" class="latest"></div>
+        <div id="articleMsg" class="note"></div>
+      </div>
+
+      <div class="block">
+        <div class="blocktitle">Citado por</div>
+        <div id="citadoPor" class="latest"></div>
+        <div id="citadoPorMsg" class="note"></div>
+      </div>
+
+      <div class="block">
+        <div class="blocktitle">Cita a</div>
+        <div id="citaA" class="latest"></div>
+        <div id="citaAMsg" class="note"></div>
+      </div>
+    </section>
+
+    <!-- Derecha (igual que index) -->
+    <aside class="app-col app-right">
+      <div class="block">
+        <div class="blocktitle">Noticias</div>
+        <div class="app-links">
+          <a href="#" target="_blank" rel="noopener">Ciencia y tecnología</a>
+          <a href="#" target="_blank" rel="noopener">Eventos académicos</a>
+          <a href="#" target="_blank" rel="noopener">Convocatorias estudiantiles</a>
+          <a href="#" target="_blank" rel="noopener">Innovación y emprendimiento</a>
+          <a href="#" target="_blank" rel="noopener">Seminarios y conferencias</a>
+        </div>
+      </div>
+    </aside>
+
   </main>
 
   <script>
@@ -63,113 +119,115 @@
       });
     }
 
-    function norm(s) { return (s ?? "").replace(/\s+/g, " ").trim(); }
+    function norm(s){ return (s ?? "").replace(/\s+/g, " ").trim(); }
 
-    function parseCitas(s) {
-      // acepta vacío, "100001,100002", "100001, 100002"
-      const raw = norm(s);
-      if (!raw) return [];
-      return raw.split(",").map(x => x.trim()).filter(Boolean);
+    function splitIds(s){
+      const v = norm(s);
+      if (!v) return [];
+      // por ahora coma; si usa punto y coma, lo cambiamos aquí
+      return v.split(",").map(x => x.trim()).filter(Boolean);
     }
 
-    function escapeHTML(str) {
-      return (str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function renderMain(d) {
+    function itemHTML(d){
       const id = norm(d["Identificador"]);
-      const autores = escapeHTML(norm(d["Autores"]));
-      const anio = escapeHTML(norm(d["Año"]));
-      const titulo = escapeHTML(norm(d["Título"]) || norm(d["Titulo"]));
-      const rol = escapeHTML(norm(d["Rol"]));
-      const estado = escapeHTML(norm(d["Estado"]));
-      const doi = escapeHTML(norm(d["DOI"]));
-      const link = norm(d["LINK"]);
-
-      document.title = titulo ? `${titulo}` : "Artículo";
+      const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+      const autores = norm(d["Autores"]) || "-";
+      const anio = norm(d["Año"]) || "-";
+      const estado = norm(d["Estado"]) || "-";
 
       return `
-        <h1>${titulo || "Documento"}</h1>
-        <div class="meta">
-          <div><b>Identificador</b> ${escapeHTML(id)}</div>
-          <div><b>Autores</b> ${autores || "-"}</div>
-          <div><b>Año</b> ${anio || "-"}</div>
-          <div><b>Rol</b> ${rol || "-"}</div>
-          <div><b>Estado</b> ${estado || "-"}</div>
-          <div><b>DOI</b> ${doi || "-"}</div>
-          ${link ? `<div><a href="${link}" target="_blank" rel="noopener">Abrir documento</a></div>` : ""}
+        <div class="item">
+          <div class="itemt"><a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a></div>
+          <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
         </div>
       `;
     }
 
-    function renderCard(d) {
+    function articleHTML(d){
       const id = norm(d["Identificador"]);
-      const autores = escapeHTML(norm(d["Autores"]));
-      const anio = escapeHTML(norm(d["Año"]));
-      const titulo = escapeHTML(norm(d["Título"]) || norm(d["Titulo"]));
-      const rol = escapeHTML(norm(d["Rol"]));
+      const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+      const autores = norm(d["Autores"]) || "-";
+      const anio = norm(d["Año"]) || "-";
+      const rol = norm(d["Rol"]) || "-";
+      const estado = norm(d["Estado"]) || "-";
+      const doi = norm(d["DOI"]) || "-";
+      const link = norm(d["LINK"]);
+
+      document.title = titulo;
 
       return `
-        <article class="card">
-          <div class="title">
-            <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
-          </div>
-          <div class="meta">
-            <div><b>Autores</b> ${autores || "-"}</div>
-            <div><b>Año</b> ${anio || "-"}</div>
-            <div><b>Rol</b> ${rol || "-"}</div>
-            <div><b>ID</b> ${escapeHTML(id)}</div>
-          </div>
-        </article>
+        <div class="item">
+          <div class="itemt">${titulo}</div>
+          <div class="itemm"><b>Autores</b> ${autores}</div>
+          <div class="itemm"><b>Año</b> ${anio}</div>
+          <div class="itemm"><b>Rol</b> ${rol}</div>
+          <div class="itemm"><b>Estado</b> ${estado}</div>
+          <div class="itemm"><b>DOI</b> ${doi}</div>
+          <div class="itemm"><b>ID</b> ${id}</div>
+          ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener">Abrir PDF</a></div>` : ""}
+        </div>
       `;
     }
 
     (async () => {
-      const main = document.getElementById("main");
-      const analisis = document.getElementById("analisis");
-      const msg = document.getElementById("msg");
+      const articleBox = document.getElementById("articleBox");
+      const articleMsg = document.getElementById("articleMsg");
 
-      if (!ID) {
-        msg.textContent = "Falta el parámetro id. Ejemplo: articulo.html?id=100001";
+      const citadoPor = document.getElementById("citadoPor");
+      const citadoPorMsg = document.getElementById("citadoPorMsg");
+
+      const citaA = document.getElementById("citaA");
+      const citaAMsg = document.getElementById("citaAMsg");
+
+      if (!ID){
+        articleMsg.textContent = "Falta parámetro id. Ejemplo: articulo.html?id=100001";
         return;
       }
 
-      try {
+      try{
         const res = await fetch(CSV_URL, { cache: "no-store" });
         if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
-
         const csv = await res.text();
         const docs = parseCSV(csv);
 
         const doc = docs.find(d => norm(d["Identificador"]) === ID);
-        if (!doc) {
-          msg.textContent = `No se encontró el documento con Identificador ${ID}.`;
+        if (!doc){
+          articleMsg.textContent = `No se encontró el documento con Identificador ${ID}.`;
           return;
         }
 
-        main.innerHTML = renderMain(doc);
+        articleBox.innerHTML = articleHTML(doc);
+        articleMsg.textContent = "";
 
-        // "Análisis" = documentos que CITAN a este ID en Citas_internas
-        const citantes = docs.filter(d => parseCitas(d["Citas_internas"]).includes(ID));
-
-        if (!citantes.length) {
-          analisis.innerHTML = "";
-          msg.textContent = "No existen documentos citantes registrados.";
-          return;
+        // CITADO POR: todos los docs cuya Citas_internas contiene ID
+        const citantes = docs.filter(d => splitIds(d["Citas_internas"]).includes(ID));
+        if (citantes.length){
+          citadoPor.innerHTML = citantes.map(itemHTML).join("");
+          citadoPorMsg.textContent = "";
+        } else {
+          citadoPor.innerHTML = "";
+          citadoPorMsg.textContent = "No existen artículos citantes registrados.";
         }
 
-        analisis.innerHTML = citantes.map(renderCard).join("");
-        msg.textContent = "";
+        // CITA A: ids que este doc cita (si existen)
+        const citaIds = splitIds(doc["Citas_internas"]);
+        const citados = citaIds
+          .map(cid => docs.find(d => norm(d["Identificador"]) === cid))
+          .filter(Boolean);
 
-      } catch (e) {
-        msg.textContent = e.message;
+        if (citados.length){
+          citaA.innerHTML = citados.map(itemHTML).join("");
+          citaAMsg.textContent = "";
+        } else {
+          citaA.innerHTML = "";
+          citaAMsg.textContent = "Este documento no cita artículos internos.";
+        }
+
+      } catch(e){
+        articleMsg.textContent = e.message;
       }
     })();
   </script>
+
 </body>
 </html>
