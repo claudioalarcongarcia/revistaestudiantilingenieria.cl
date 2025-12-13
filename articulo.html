@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Artículo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="articulo"></div>
+<hr>
+<h2>Análisis</h2>
+<div id="analisis"></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const ID = params.get("id");
+
+const SHEET_ID = "SU_SHEET_ID";
+const SHEET_NAME = "hoja 01";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+fetch(CSV_URL)
+  .then(r => r.text())
+  .then(csv => {
+    const rows = csv.split("\n").map(r => r.split(","));
+    const headers = rows.shift();
+
+    const docs = rows.map(r => {
+      const o = {};
+      headers.forEach((h,i)=>o[h.trim()] = (r[i]||"").trim());
+      return o;
+    });
+
+    const doc = docs.find(d => d.Identificador === ID);
+    if (!doc) return;
+
+    // Artículo principal
+    document.getElementById("articulo").innerHTML = `
+      <h1>${doc.Título}</h1>
+      <p><b>Autores:</b> ${doc.Autores}</p>
+      <p><b>Año:</b> ${doc.Año}</p>
+      <p><b>Rol:</b> ${doc.Rol}</p>
+      <p><b>Estado:</b> ${doc.Estado}</p>
+      <p><b>DOI:</b> ${doc.DOI || "-"}</p>
+      <p><a href="${doc.LINK}" target="_blank">Ver PDF</a></p>
+    `;
+
+    // Análisis = documentos que lo citan
+    const citantes = docs.filter(d => {
+      if (!d.Citas_internas) return false;
+      return d.Citas_internas
+        .split(",")
+        .map(x => x.trim())
+        .includes(ID);
+    });
+
+    document.getElementById("analisis").innerHTML =
+      citantes.length
+        ? citantes.map(d => `
+            <div class="card">
+              <a href="articulo.html?id=${d.Identificador}">
+                ${d.Título}
+              </a>
+              <div>${d.Autores}</div>
+              <div>${d.Año} · ${d.Rol}</div>
+            </div>
+          `).join("")
+        : "<p>No existen análisis registrados.</p>";
+  });
+</script>
+
+</body>
+</html>
