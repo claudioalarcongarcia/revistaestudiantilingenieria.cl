@@ -1,29 +1,40 @@
 :root{
-  /* Paleta pastel damasco (apricot) */
-  --bg:#fffdfb;
-  --section:#fbefe6;      /* fondo general damasco muy suave */
-  --panel:#fff7f1;        /* paneles claros */
-  --line:#e8d4c6;         /* borde cálido */
-  --ink:#2b2420;          /* texto oscuro cálido */
-  --muted:#6b5b52;        /* texto secundario */
+  /* Sobrio académico */
+  --bg:#ffffff;
+  --section:#f6f7f9;
+  --panel:#ffffff;
+  --line:#dbe2e8;
 
-  --accent:#9a5b3c;       /* damasco tostado para botones */
-  --accent-hover:#844a30; /* hover */
+  --ink:#1f2933;
+  --muted:#5b6670;
+
+  --accent:#1F4E5F;        /* azul petróleo */
+  --accent-hover:#173D4B;
+  --accent2:#2E7D6B;       /* verde académico */
 }
 
 /* ===== Reset mínimo ===== */
-*{ box-sizing:border-box }
+*{ box-sizing:border-box; }
 
 body{
   margin:0;
   font-family: Arial, Helvetica, sans-serif;
   background:var(--section);
   color:var(--ink);
-  line-height:1.55;
+  line-height:1.6;
+  font-size:14px;
+  font-weight:400;
+
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.1px;
 }
 
+/* Links editoriales */
 a{ color:inherit; text-decoration:none; }
-a:hover{ text-decoration:underline; }
+a:hover{ text-decoration:none; }
 
 /* ===== Barra superior fija ===== */
 .app-topbar{
@@ -39,78 +50,107 @@ a:hover{ text-decoration:underline; }
   background-size: cover;
 
   border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(140%) blur(6px);
 }
 
+/* Topbar alineada con las 3 columnas del layout */
 .app-topbar-inner{
-  max-width:1100px;
+  max-width:1180px;
   margin:0 auto;
   padding:10px 16px;
   min-height:70px;
 
   display:grid;
-  grid-template-columns: 1fr 1.6fr 1fr;
+  grid-template-columns: 0.9fr 2.2fr 0.9fr; /* igual que .app-shell */
   align-items:center;
-  gap:16px;
+  gap:18px; /* igual que .app-shell */
 }
 
-
 .app-topbar-title{
-  width: 100%;           /* Asegura que ocupe todo el ancho de la columna */
-  font-weight: 600;
-  font-size: 14px;
-  text-align: center;    /* Centrado horizontal del texto */
-  
-  background:rgba(255,253,251,0.80);
-  border: 1px solid rgba(232,212,198,0.85);
-  padding: 8px 12px;
-  border-radius: 6px;
+  width:100%;
+  justify-self:stretch;
+  text-align:center;
+
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(219,226,232,0.95);
+  padding:10px 14px;
+  border-radius:12px;
+
+  font-size:16px;
+  font-weight:800;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.4px;
 }
 
 .app-topbar-nav{
+  grid-column:2;
+  justify-self:center;
+
   display:flex;
-  gap:8px;
+  gap:10px;
   flex-wrap:wrap;
 }
 
 .navbtn{
-  padding:8px 10px;
-  border-radius:6px;
-  border:1px solid rgba(232,212,198,0.90);
-  background:rgba(255,253,251,0.80);
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(219,226,232,0.95);
+  background:rgba(255,255,255,0.85);
+  font-size:14px;
+  font-weight:400;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.2px;
 }
 .navbtn:hover{
-  background:#fffdfb;
-  text-decoration:none;
+  background:#ffffff;
+  border-color:rgba(31,78,95,0.35);
 }
 
 /* ===== Shell principal ===== */
 .app-shell{
-  max-width:1100px;
+  max-width:1180px;
   margin:0 auto;
   padding:16px;
-  padding-top:70px;   /* espacio exacto para la topbar */
+  padding-top:86px;  /* topbar respira más */
   height:100vh;
 
   display:grid;
-  grid-template-columns:1fr 1.6fr 1fr;
-  gap:16px;
+  grid-template-columns: 0.9fr 2.2fr 0.9fr; /* jerarquía 20-60-20 */
+  gap:18px;
 }
 
 /* ===== Columnas ===== */
 .app-col{
-  background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:8px;      /* menos redondeado */
-  padding:14px;
+  background:rgba(255,255,255,0.90);
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:14px;
+  padding:16px;
 
-  overflow:auto;          /* scroll interno */
+  overflow:auto;
   min-height:0;
+
+  box-shadow: 0 8px 22px rgba(16,24,40,0.06);
+}
+
+/* Laterales más livianos */
+.app-left, .app-right{
+  background:rgba(255,255,255,0.78);
+}
+.app-mid{
+  background:#ffffff;
 }
 
 /* ===== Columna izquierda ===== */
 .app-h1{
-  margin:0 0 12px 0;
-  font-size:18px;
+  margin:0 0 14px 0;
+  font-size:16px;
+  font-weight:800;
+  line-height:1.25;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.1px;
 }
 
 .app-stack{
@@ -124,24 +164,27 @@ a:hover{ text-decoration:underline; }
   display:block;
   text-align:center;
   padding:10px 12px;
-  border-radius:6px;              /* menos redondeado */
+
+  border-radius:12px;
   background:var(--accent);
-  color:#fffdfb;
+  color:#ffffff;
   border:1px solid var(--accent);
+
+  font-size:12px;
+  font-weight:600;
 }
 .btn2:hover{
   background:var(--accent-hover);
   border-color:var(--accent-hover);
-  text-decoration:none;
 }
 
 .btn2.ghost{
-  background:var(--panel);
+  background:transparent;
   color:var(--accent);
-  border:1px solid var(--line);
+  border:1px solid rgba(31,78,95,0.35);
 }
 .btn2.ghost:hover{
-  background:#fffdfb;
+  background:rgba(31,78,95,0.06);
 }
 
 .app-links{
@@ -152,27 +195,40 @@ a:hover{ text-decoration:underline; }
 
 .app-links a{
   padding:9px 10px;
-  border-radius:6px;
-  background:var(--panel);
-  border:1px solid var(--line);
+  border-radius:12px;
+
+  background:rgba(246,247,249,0.9);
+  border:1px solid rgba(219,226,232,0.95);
+
+  font-size:12px;
+  font-weight:400;
 }
 .app-links a:hover{
-  background:#fffdfb;
-  text-decoration:none;
+  background:#ffffff;
+  border-color:rgba(31,78,95,0.30);
 }
 
 /* ===== Bloques (centro y derecha) ===== */
 .block{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:8px;      /* menos redondeado */
-  padding:12px;
+  background:#ffffff;
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:14px;
+  padding:14px;
   margin-bottom:12px;
+
+  box-shadow: 0 6px 18px rgba(16,24,40,0.05);
 }
 
 .blocktitle{
-  font-weight:700;
-  margin-bottom:10px;
+  margin-bottom:12px;
+  color:var(--accent);
+  text-transform:uppercase;
+
+  font-size:13px;
+  font-weight:800;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.6px;
 }
 
 /* ===== Video ===== */
@@ -180,9 +236,9 @@ a:hover{ text-decoration:underline; }
   position:relative;
   width:100%;
   padding-top:56.25%;
-  border-radius:8px;
+  border-radius:14px;
   overflow:hidden;
-  border:1px solid var(--line);
+  border:1px solid rgba(219,226,232,0.95);
   background:#000;
 }
 .video iframe{
@@ -196,298 +252,15 @@ a:hover{ text-decoration:underline; }
 .latest{
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:12px;
 }
-
-.item{
-  background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:10px;
-}
-
-.itemt{
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.itemm{
-  color:var(--muted);
-  font-size:13px;
-}
-
-/* ===== Notas ===== */
-.note{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:8px;
-}
-
-/* ===== Responsive ===== */
-@media (max-width:980px){
-  .app-shell{
-    grid-template-columns:1fr;
-    height:auto;
-    padding-top:70px;
-  }
-  .app-col{
-    overflow:visible;
-  }
-}
-
-/* lineas finales*/
-/* =============================
-   Tipografía estilo MDPI
-   ============================= */
-
-/* Texto base */
-body{
-  font-size: 14px;
-  line-height: 1.6;
-  font-weight: 400;
-}
-
-/* Títulos principales */
-.app-topbar-title{
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.app-h1{
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-/* Títulos de bloque */
-.blocktitle{
-  font-size: 14px;
-  font-weight: 600;
-}
-
-/* Títulos de artículos */
-.itemt{
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-/* Texto secundario */
-.itemm,
-.note{
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-/* Navegación superior */
-.navbtn{
-  font-size: 14px;
-  font-weight: 400;
-}
-
-/* Botones laterales */
-.btn2{
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* Links laterales */
-.app-links a{
-  font-size: 12px;
-  font-weight: 400;
-}
-
-/* Evitar títulos exagerados en móvil */
-@media (max-width:980px){
-  body{
-    font-size: 14px;
-  }
-}
-
-.tabs{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin: 8px 0 12px 0;
-}
-
-.tabbtn{
-  padding:8px 10px;
-  border-radius:6px;
-  border:1px solid var(--line);
-  background: var(--bg);
-  cursor:pointer;
-  font-size: 13px;
-}
-
-.tabbtn.active{
-  background: var(--panel);
-  border-color: var(--accent);
-}
-
-/* =============================
-   OVERRIDE: look "revista" (3 columnas con jerarquía)
-   Pegar al final de styles.css
-   ============================= */
-
-:root{
-  /* Sobrio académico */
-  --bg:#ffffff;
-  --section:#f6f7f9;
-  --panel:#ffffff;
-  --line:#dbe2e8;
-
-  --ink:#1f2933;
-  --muted:#5b6670;
-
-  --accent:#1F4E5F;        /* azul petróleo */
-  --accent-hover:#173D4B;
-  --accent2:#2E7D6B;       /* verde académico */
-}
-
-/* Fondo general más neutro */
-body{
-  background:var(--section);
-  color:var(--ink);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* Links más editoriales */
-a{ text-decoration:none; }
-a:hover{ text-decoration:none; }
-
-/* ===== Topbar: más limpia y con más peso ===== */
-.app-topbar{
-  border-bottom:1px solid var(--line);
-  backdrop-filter:saturate(140%) blur(6px);
-}
-
-.app-topbar-inner{
-  max-width:1180px;
-  grid-template-columns: 1fr 2fr 1fr;
-}
-
-.app-topbar-title{
-  font-size:14px;
-  font-weight:700;
-  letter-spacing:0.2px;
-  background:rgba(255,255,255,0.85);
-  border:1px solid rgba(219,226,232,0.95);
-  border-radius:10px;
-}
-
-.navbtn{
-  background:rgba(255,255,255,0.85);
-  border:1px solid rgba(219,226,232,0.95);
-  border-radius:999px;
-  padding:8px 12px;
-}
-.navbtn:hover{
-  background:#ffffff;
-  border-color:rgba(31,78,95,0.35);
-}
-
-/* ===== Shell: jerarquía real 20-60-20 ===== */
-.app-shell{
-  max-width:1180px;
-  gap:18px;
-  padding-top:86px; /* topbar respira más */
-  grid-template-columns: 0.9fr 2.2fr 0.9fr;
-}
-
-/* Columnas: sensación tarjeta, sin “intranet” */
-.app-col{
-  background:rgba(255,255,255,0.90);
-  border:1px solid rgba(219,226,232,0.95);
-  border-radius:14px;
-  padding:16px;
-  box-shadow: 0 8px 22px rgba(16,24,40,0.06);
-}
-
-/* Izquierda y derecha más livianas que el centro */
-.app-left, .app-right{
-  background:rgba(255,255,255,0.78);
-}
-.app-mid{
-  background:#ffffff;
-}
-
-/* Título de la revista: más editorial */
-.app-h1{
-  font-size:16px;
-  font-weight:800;
-  line-height:1.25;
-  margin:0 0 14px 0;
-  letter-spacing:0.1px;
-}
-
-/* ===== Botones laterales ===== */
-.btn2{
-  border-radius:12px;
-  background:var(--accent);
-  border:1px solid var(--accent);
-  padding:10px 12px;
-  font-weight:600;
-}
-.btn2:hover{
-  background:var(--accent-hover);
-  border-color:var(--accent-hover);
-}
-.btn2.ghost{
-  background:transparent;
-  color:var(--accent);
-  border:1px solid rgba(31,78,95,0.35);
-}
-.btn2.ghost:hover{
-  background:rgba(31,78,95,0.06);
-}
-
-/* Links laterales: que no compitan con el centro */
-.app-links a{
-  background:rgba(246,247,249,0.9);
-  border:1px solid rgba(219,226,232,0.95);
-  border-radius:12px;
-  padding:9px 10px;
-  color:var(--ink);
-}
-.app-links a:hover{
-  background:#ffffff;
-  border-color:rgba(31,78,95,0.30);
-}
-
-/* ===== Bloques en centro/derecha ===== */
-.block{
-  background:#ffffff;
-  border:1px solid rgba(219,226,232,0.95);
-  border-radius:14px;
-  padding:14px;
-  box-shadow: 0 6px 18px rgba(16,24,40,0.05);
-}
-
-.blocktitle{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:0.2px;
-  color:var(--accent);
-  margin-bottom:12px;
-  text-transform:uppercase;
-}
-
-/* Video: borde más limpio */
-.video{
-  border-radius:14px;
-  border:1px solid rgba(219,226,232,0.95);
-}
-
-/* ===== Artículos como tarjetas editoriales ===== */
-.latest{ gap:12px; }
 
 .item{
   background:#ffffff;
   border:1px solid rgba(219,226,232,0.95);
   border-radius:14px;
   padding:12px 12px;
+
   transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
 }
 .item:hover{
@@ -497,36 +270,69 @@ a:hover{ text-decoration:none; }
 }
 
 .itemt{
+  margin-bottom:6px;
+
   font-size:14px;
   font-weight:800;
-  line-height:1.35;
-  margin-bottom:6px;
+  line-height:1.45;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.2px;
 }
-.itemt a{
-  color:var(--ink);
-}
-.itemt a:hover{
-  color:var(--accent);
-}
+
+.itemt a{ color:var(--ink); }
+.itemt a:hover{ color:var(--accent); }
 
 .itemm{
-  font-size:12px;
   color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+
+  /* Microajuste tipográfico */
+  letter-spacing:0.1px;
 }
 
-/* Notas */
+/* ===== Notas ===== */
 .note{
   color:var(--muted);
   font-size:12px;
+  line-height:1.5;
+  margin-top:8px;
 }
 
-/* ===== Responsive: mantener 2 columnas antes de 1 ===== */
+/* ===== Tabs ===== */
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin: 8px 0 12px 0;
+}
+
+.tabbtn{
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(219,226,232,0.95);
+  background: var(--bg);
+  cursor:pointer;
+  font-size:13px;
+}
+
+.tabbtn.active{
+  border-color:rgba(31,78,95,0.55);
+  background:rgba(31,78,95,0.06);
+}
+
+/* ===== Responsive ===== */
 @media (max-width:1100px){
   .app-shell{
     grid-template-columns: 1fr 1.8fr;
+    height:auto;
   }
   .app-right{
-    grid-column: 1 / -1;   /* derecha baja completa */
+    grid-column: 1 / -1;
+  }
+  .app-col{
+    overflow:visible;
   }
 }
 
@@ -534,48 +340,9 @@ a:hover{ text-decoration:none; }
   .app-shell{
     grid-template-columns:1fr;
     height:auto;
+    padding-top:86px;
   }
-  .app-col{ overflow:visible; }
+  .app-col{
+    overflow:visible;
+  }
 }
-
-/* Tabs si las usa: más consistentes */
-.tabbtn{
-  border-radius:999px;
-  border:1px solid rgba(219,226,232,0.95);
-}
-.tabbtn.active{
-  border-color:rgba(31,78,95,0.55);
-  background:rgba(31,78,95,0.06);
-}
-/* ===== Topbar alineada con las 3 columnas del layout ===== */
-.app-topbar-inner{
-  max-width:1180px;
-  padding:10px 16px;
-  min-height:70px;
-
-  display:grid;
-  grid-template-columns: 0.9fr 2.2fr 0.9fr; /* IGUAL que .app-shell */
-  align-items:center;
-  gap:18px; /* IGUAL que .app-shell gap */
-}
-
-/* El título vive en la columna izquierda y debe “calzar” */
-.app-topbar-title{
-  justify-self:stretch;
-  text-align:center;
-  font-size:16px;
-  font-weight:800;
-  border-radius:12px;
-}
-
-/* La navegación debe estar centrada respecto a la columna central */
-.app-topbar-nav{
-  grid-column:2;              /* se ubica en la columna central */
-  justify-self:center;        /* se centra dentro de esa columna */
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-/* Opcional: la columna derecha del topbar queda vacía sin romper alineación */
-
