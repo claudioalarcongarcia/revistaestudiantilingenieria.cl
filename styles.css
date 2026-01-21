@@ -325,4 +325,226 @@ body{
   border-color: var(--accent);
 }
 
+/* =============================
+   OVERRIDE: look "revista" (3 columnas con jerarquía)
+   Pegar al final de styles.css
+   ============================= */
+
+:root{
+  /* Sobrio académico */
+  --bg:#ffffff;
+  --section:#f6f7f9;
+  --panel:#ffffff;
+  --line:#dbe2e8;
+
+  --ink:#1f2933;
+  --muted:#5b6670;
+
+  --accent:#1F4E5F;        /* azul petróleo */
+  --accent-hover:#173D4B;
+  --accent2:#2E7D6B;       /* verde académico */
+}
+
+/* Fondo general más neutro */
+body{
+  background:var(--section);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Links más editoriales */
+a{ text-decoration:none; }
+a:hover{ text-decoration:none; }
+
+/* ===== Topbar: más limpia y con más peso ===== */
+.app-topbar{
+  border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(140%) blur(6px);
+}
+
+.app-topbar-inner{
+  max-width:1180px;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+.app-topbar-title{
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:0.2px;
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:10px;
+}
+
+.navbtn{
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:999px;
+  padding:8px 12px;
+}
+.navbtn:hover{
+  background:#ffffff;
+  border-color:rgba(31,78,95,0.35);
+}
+
+/* ===== Shell: jerarquía real 20-60-20 ===== */
+.app-shell{
+  max-width:1180px;
+  gap:18px;
+  padding-top:86px; /* topbar respira más */
+  grid-template-columns: 0.9fr 2.2fr 0.9fr;
+}
+
+/* Columnas: sensación tarjeta, sin “intranet” */
+.app-col{
+  background:rgba(255,255,255,0.90);
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:14px;
+  padding:16px;
+  box-shadow: 0 8px 22px rgba(16,24,40,0.06);
+}
+
+/* Izquierda y derecha más livianas que el centro */
+.app-left, .app-right{
+  background:rgba(255,255,255,0.78);
+}
+.app-mid{
+  background:#ffffff;
+}
+
+/* Título de la revista: más editorial */
+.app-h1{
+  font-size:16px;
+  font-weight:800;
+  line-height:1.25;
+  margin:0 0 14px 0;
+  letter-spacing:0.1px;
+}
+
+/* ===== Botones laterales ===== */
+.btn2{
+  border-radius:12px;
+  background:var(--accent);
+  border:1px solid var(--accent);
+  padding:10px 12px;
+  font-weight:600;
+}
+.btn2:hover{
+  background:var(--accent-hover);
+  border-color:var(--accent-hover);
+}
+.btn2.ghost{
+  background:transparent;
+  color:var(--accent);
+  border:1px solid rgba(31,78,95,0.35);
+}
+.btn2.ghost:hover{
+  background:rgba(31,78,95,0.06);
+}
+
+/* Links laterales: que no compitan con el centro */
+.app-links a{
+  background:rgba(246,247,249,0.9);
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:12px;
+  padding:9px 10px;
+  color:var(--ink);
+}
+.app-links a:hover{
+  background:#ffffff;
+  border-color:rgba(31,78,95,0.30);
+}
+
+/* ===== Bloques en centro/derecha ===== */
+.block{
+  background:#ffffff;
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:14px;
+  padding:14px;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.05);
+}
+
+.blocktitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:0.2px;
+  color:var(--accent);
+  margin-bottom:12px;
+  text-transform:uppercase;
+}
+
+/* Video: borde más limpio */
+.video{
+  border-radius:14px;
+  border:1px solid rgba(219,226,232,0.95);
+}
+
+/* ===== Artículos como tarjetas editoriales ===== */
+.latest{ gap:12px; }
+
+.item{
+  background:#ffffff;
+  border:1px solid rgba(219,226,232,0.95);
+  border-radius:14px;
+  padding:12px 12px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
+}
+.item:hover{
+  transform: translateY(-1px);
+  border-color: rgba(31,78,95,0.35);
+  box-shadow: 0 10px 22px rgba(16,24,40,0.08);
+}
+
+.itemt{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.35;
+  margin-bottom:6px;
+}
+.itemt a{
+  color:var(--ink);
+}
+.itemt a:hover{
+  color:var(--accent);
+}
+
+.itemm{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* Notas */
+.note{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* ===== Responsive: mantener 2 columnas antes de 1 ===== */
+@media (max-width:1100px){
+  .app-shell{
+    grid-template-columns: 1fr 1.8fr;
+  }
+  .app-right{
+    grid-column: 1 / -1;   /* derecha baja completa */
+  }
+}
+
+@media (max-width:980px){
+  .app-shell{
+    grid-template-columns:1fr;
+    height:auto;
+  }
+  .app-col{ overflow:visible; }
+}
+
+/* Tabs si las usa: más consistentes */
+.tabbtn{
+  border-radius:999px;
+  border:1px solid rgba(219,226,232,0.95);
+}
+.tabbtn.active{
+  border-color:rgba(31,78,95,0.55);
+  background:rgba(31,78,95,0.06);
+}
 
