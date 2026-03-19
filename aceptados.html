@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artículos aceptados</title>
-  <link rel="stylesheet" href="styles.css?v=26">
+  <link rel="stylesheet" href="styles.css?v=27">
 </head>
 
 <body class="app-bg">
@@ -67,53 +67,58 @@
 </main>
 
 <script>
+
 const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
 const SHEET_NAME = "Hoja 01";
 
 const CSV_URL =
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 function norm(s){
   return (s ?? "").replace(/\s+/g," ").trim();
 }
 
 function parseCSV(text){
+
   const rows=[];
   let row=[];
   let cur="";
   let inQuotes=false;
 
   for(let i=0;i<text.length;i++){
+
     const c=text[i];
     const n=text[i+1];
 
-    if(c === '"' && inQuotes && n === '"'){cur += '"'; i++; continue;}
-    if(c === '"'){inQuotes = !inQuotes; continue;}
+    if(c === '"' && inQuotes && n === '"'){ cur+='"'; i++; continue; }
+    if(c === '"'){ inQuotes=!inQuotes; continue; }
 
-    if(c === "," && !inQuotes){row.push(cur); cur=""; continue;}
+    if(c === "," && !inQuotes){ row.push(cur); cur=""; continue; }
 
     if((c === "\n" || c === "\r") && !inQuotes){
       if(c === "\r" && n === "\n") i++;
       row.push(cur);
       cur="";
-      if(row.some(x => x.trim())) rows.push(row);
+      if(row.some(x=>x.trim())) rows.push(row);
       row=[];
       continue;
     }
 
-    cur += c;
+    cur+=c;
+
   }
 
   row.push(cur);
-  if(row.some(x => x.trim())) rows.push(row);
+  if(row.some(x=>x.trim())) rows.push(row);
 
-  const headers = rows.shift().map(h => h.trim());
+  const headers = rows.shift().map(h=>h.trim());
 
   return rows.map(r=>{
     const obj={};
-    headers.forEach((h,i)=>obj[h]=(r[i] ?? "").trim());
+    headers.forEach((h,i)=> obj[h]=(r[i] ?? "").trim());
     return obj;
   });
+
 }
 
 function cardHTML(d){
@@ -127,11 +132,23 @@ function cardHTML(d){
 
   return `
     <div class="item">
+
       <div class="itemt">
-        <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
+        ${id
+          ? `<a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>`
+          : titulo}
       </div>
-      <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
-      ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
+
+      <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id || "-"}</div>
+
+      ${link
+        ? `<div class="itemm">
+            <a href="${link}" target="_blank" rel="noopener" class="linkpdf">
+              Abrir enlace a PDF
+            </a>
+          </div>`
+        : ""}
+
     </div>
   `;
 }
@@ -140,14 +157,13 @@ const list = document.getElementById("list");
 const msg = document.getElementById("msg");
 
 (async()=>{
+
   try{
 
     const res = await fetch(CSV_URL,{cache:"no-store"});
-
     if(!res.ok) throw new Error("No se pudo leer el Google Sheet.");
 
     const csv = await res.text();
-
     const all = parseCSV(csv);
 
     const aceptados =
@@ -162,7 +178,9 @@ const msg = document.getElementById("msg");
   }catch(e){
     msg.textContent = e.message;
   }
+
 })();
+
 </script>
 
 </body>
