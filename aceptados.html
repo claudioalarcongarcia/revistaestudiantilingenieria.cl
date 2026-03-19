@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artículos aceptados</title>
-  <link rel="stylesheet" href="styles.css?v=25">
+  <link rel="stylesheet" href="styles.css?v=26">
 </head>
 
 <body class="app-bg">
@@ -45,15 +45,9 @@
     <div class="block">
       <div class="blocktitle">Artículos aceptados</div>
 
-      <div class="tabs">
-        <button class="tabbtn active" data-estado="Aceptado">Aceptado</button>
-        <button class="tabbtn" data-estado="Aceptado con observaciones">Aceptado con observaciones</button>
-        <button class="tabbtn" data-estado="No clasificado">No clasificado</button>
-        <button class="tabbtn" data-estado="Refutado">Refutado</button>
-      </div>
-
       <div id="list" class="latest"></div>
       <div id="msg" class="note"></div>
+
     </div>
 
   </section>
@@ -73,101 +67,102 @@
 </main>
 
 <script>
-  const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
-  const SHEET_NAME = "Hoja 01";
-  const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+const SHEET_NAME = "Hoja 01";
 
-  function parseCSV(text) {
-    const rows = [];
-    let row = [];
-    let cur = "";
-    let inQuotes = false;
+const CSV_URL =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i];
-      const n = text[i + 1];
+function norm(s){
+  return (s ?? "").replace(/\s+/g," ").trim();
+}
 
-      if (c === '"' && inQuotes && n === '"') { cur += '"'; i++; continue; }
-      if (c === '"') { inQuotes = !inQuotes; continue; }
+function parseCSV(text){
+  const rows=[];
+  let row=[];
+  let cur="";
+  let inQuotes=false;
 
-      if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
-      if ((c === "\n" || c === "\r") && !inQuotes) {
-        if (c === "\r" && n === "\n") i++;
-        row.push(cur);
-        cur = "";
-        if (row.some(x => x.trim() !== "")) rows.push(row);
-        row = [];
-        continue;
-      }
-      cur += c;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    const n=text[i+1];
+
+    if(c === '"' && inQuotes && n === '"'){cur += '"'; i++; continue;}
+    if(c === '"'){inQuotes = !inQuotes; continue;}
+
+    if(c === "," && !inQuotes){row.push(cur); cur=""; continue;}
+
+    if((c === "\n" || c === "\r") && !inQuotes){
+      if(c === "\r" && n === "\n") i++;
+      row.push(cur);
+      cur="";
+      if(row.some(x => x.trim())) rows.push(row);
+      row=[];
+      continue;
     }
 
-    row.push(cur);
-    if (row.some(x => x.trim() !== "")) rows.push(row);
-
-    const headers = rows.shift().map(h => h.trim());
-    return rows.map(r => {
-      const obj = {};
-      headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
-      return obj;
-    });
+    cur += c;
   }
 
-  function norm(s) {
-    return (s ?? "").replace(/\s+/g, " ").trim();
-  }
+  row.push(cur);
+  if(row.some(x => x.trim())) rows.push(row);
 
-  function cardHTML(d) {
-    const id = norm(d["Identificador"]);
-    const titulo = norm(d["Titulo"]) || "Documento";
-    const autores = norm(d["Autores"]) || "-";
-    const anio = norm(d["Año"]) || "-";
-    const estado = norm(d["Estado"]) || "-";
-    const link = norm(d["LINK"]);
+  const headers = rows.shift().map(h => h.trim());
 
-    return `
-      <div class="item">
-        <div class="itemt">
-          <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
-        </div>
-        <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
-        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
-      </div>
-    `;
-  }
-
-  const list = document.getElementById("list");
-  const msg = document.getElementById("msg");
-
-  let all = [];
-  let estadoActual = "Aceptado";
-
-  function render() {
-    const items = all.filter(d => norm(d["Estado"]) === estadoActual);
-    list.innerHTML = items.map(cardHTML).join("");
-    msg.textContent = items.length ? "" : "No hay documentos en esta categoría.";
-  }
-
-  document.querySelectorAll(".tabbtn").forEach(b => {
-    b.addEventListener("click", () => {
-      document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
-      estadoActual = b.dataset.estado;
-      render();
-    });
+  return rows.map(r=>{
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(r[i] ?? "").trim());
+    return obj;
   });
+}
 
-  (async () => {
-    try {
-      const res = await fetch(CSV_URL, { cache: "no-store" });
-      if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
-      const csv = await res.text();
-      all = parseCSV(csv);
-      render();
-    } catch (e) {
-      msg.textContent = e.message;
-    }
-  })();
+function cardHTML(d){
+
+  const id = norm(d["Identificador"]);
+  const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+  const autores = norm(d["Autores"]) || "-";
+  const anio = norm(d["Año"]) || "-";
+  const estado = norm(d["Estado"]) || "-";
+  const link = norm(d["LINK"]);
+
+  return `
+    <div class="item">
+      <div class="itemt">
+        <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
+      </div>
+      <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
+      ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
+    </div>
+  `;
+}
+
+const list = document.getElementById("list");
+const msg = document.getElementById("msg");
+
+(async()=>{
+  try{
+
+    const res = await fetch(CSV_URL,{cache:"no-store"});
+
+    if(!res.ok) throw new Error("No se pudo leer el Google Sheet.");
+
+    const csv = await res.text();
+
+    const all = parseCSV(csv);
+
+    const aceptados =
+      all.filter(d => norm(d["Estado"]) === "Aceptado");
+
+    list.innerHTML =
+      aceptados.map(cardHTML).join("");
+
+    msg.textContent =
+      aceptados.length ? "" : "No hay artículos aceptados.";
+
+  }catch(e){
+    msg.textContent = e.message;
+  }
+})();
 </script>
 
 </body>
