@@ -7,52 +7,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Revista Estudiantil Ingeniería</title>
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=25">
 </head>
 
 <body class="app-bg">
 
-<!-- Barra superior fija -->
 <header class="app-topbar">
   <div class="app-topbar-inner">
-  <div class="app-topbar-title">Revista Estudiantil Ingeniería</div>
+    <div class="app-topbar-title">Revista Estudiantil Ingeniería</div>
     <nav class="app-topbar-nav">
       <a class="navbtn" href="index.html">Inicio</a>
-      <a class="navbtn" href="procesados.html">Procesados</a>
-      <a class="navbtn" href="no_procesados.html">No procesados</a>
+      <a class="navbtn" href="aceptados.html">Artículos aceptados</a>
+      <a class="navbtn" href="preprints.html">Preprints</a>
       <a class="navbtn" href="#">Acerca de</a>
     </nav>
   </div>
 </header>
 
-<!-- Layout principal -->
 <main class="app-shell">
 
-  <!-- Columna izquierda -->
   <aside class="app-col app-left">
     <div class="app-stack">
-      <a class="btn2" href="procesados.html">Procesados</a>
-      <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
+      <a class="btn2" href="aceptados.html">Artículos aceptados</a>
+      <a class="btn2 ghost" href="preprints.html">Preprints</a>
     </div>
 
     <div class="app-links">
       <a href="#">Protocolo editorial</a>
-      <a href="procesados.html">Estados editoriales</a>
-      <a href="no_procesados.html">Ingreso de trabajos</a>
+      <a href="aceptados.html">Estados editoriales</a>
+      <a href="preprints.html">Ingreso de trabajos</a>
       <a href="#">Normas de publicación</a>
       <a href="#">Equipo editorial</a>
       <a href="#">Contacto</a>
     </div>
   </aside>
 
-  <!-- Columna central -->
   <section class="app-col app-mid">
 
-    <!-- Video -->
     <div class="block">
       <div class="blocktitle">Video</div>
 
-      <!-- Reemplace VIDEO_ID -->
       <div class="video">
         <iframe
           src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&playsinline=1&rel=0"
@@ -68,7 +62,6 @@
       </div>
     </div>
 
-    <!-- Últimos artículos -->
     <div class="block">
       <div class="blocktitle">Últimos artículos</div>
       <div id="latestList" class="latest"></div>
@@ -77,16 +70,15 @@
 
   </section>
 
-  <!-- Columna derecha -->
   <aside class="app-col app-right">
     <div class="block">
       <div class="blocktitle">Noticias</div>
       <div class="app-links">
-        <a href="#" target="_blank">Ciencia y tecnología</a>
-        <a href="#" target="_blank">Eventos académicos</a>
-        <a href="#" target="_blank">Convocatorias estudiantiles</a>
-        <a href="#" target="_blank">Innovación y emprendimiento</a>
-        <a href="#" target="_blank">Seminarios y conferencias</a>
+        <a href="#" target="_blank" rel="noopener">Ciencia y tecnología</a>
+        <a href="#" target="_blank" rel="noopener">Eventos académicos</a>
+        <a href="#" target="_blank" rel="noopener">Convocatorias estudiantiles</a>
+        <a href="#" target="_blank" rel="noopener">Innovación y emprendimiento</a>
+        <a href="#" target="_blank" rel="noopener">Seminarios y conferencias</a>
       </div>
     </div>
   </aside>
@@ -95,65 +87,105 @@
 
 <script>
 /* ================= CONFIG ================= */
-const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+const SHEET_ACEPTADOS_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+const SHEET_PREPRINTS_ID = "1qATJ1zbOpkvfCjJJDJShPq7SbxzUdlQQ3GuurtkmmVY";
 const SHEET_NAME = "Hoja 01";
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+const CSV_ACEPTADOS_URL =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ACEPTADOS_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+const CSV_PREPRINTS_URL =
+  `https://docs.google.com/spreadsheets/d/${SHEET_PREPRINTS_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 /* ================= UTILIDADES ================= */
-function norm(s){ return (s ?? "").replace(/\s+/g," ").trim(); }
+function norm(s){
+  return (s ?? "").replace(/\s+/g, " ").trim();
+}
 
 function parseCSV(text){
-  const rows=[], row=[]; let cur="", inQ=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i], n=text[i+1];
-    if(c=='"' && inQ && n=='"'){cur+='"';i++;continue;}
-    if(c=='"'){inQ=!inQ;continue;}
-    if(c=="," && !inQ){row.push(cur);cur="";continue;}
-    if((c=="\n"||c=="\r")&&!inQ){
-      if(c=="\r"&&n=="\n")i++;
-      row.push(cur);cur="";
-      if(row.some(x=>x.trim())) rows.push(row.splice(0));
+  const rows = [];
+  let row = [];
+  let cur = "";
+  let inQ = false;
+
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    const n = text[i + 1];
+
+    if(c === '"' && inQ && n === '"'){
+      cur += '"';
+      i++;
       continue;
     }
-    cur+=c;
-  }
-  row.push(cur);
-  if(row.some(x=>x.trim())) rows.push(row);
 
-  const headers = rows.shift().map(h=>h.trim());
-  return rows.map(r=>{
-    const o={}; headers.forEach((h,i)=>o[h]=(r[i]||"").trim());
+    if(c === '"'){
+      inQ = !inQ;
+      continue;
+    }
+
+    if(c === "," && !inQ){
+      row.push(cur);
+      cur = "";
+      continue;
+    }
+
+    if((c === "\n" || c === "\r") && !inQ){
+      if(c === "\r" && n === "\n") i++;
+      row.push(cur);
+      cur = "";
+      if(row.some(x => x.trim() !== "")) rows.push(row);
+      row = [];
+      continue;
+    }
+
+    cur += c;
+  }
+
+  row.push(cur);
+  if(row.some(x => x.trim() !== "")) rows.push(row);
+
+  const headers = rows.shift().map(h => h.trim());
+
+  return rows.map(r => {
+    const o = {};
+    headers.forEach((h, i) => o[h] = (r[i] || "").trim());
     return o;
   });
 }
 
-function parseDate(s){
-  const v=norm(s);
-  if(!v) return 0;
-  const t=Date.parse(v.length==4?`${v}-01-01`:v);
-  return isNaN(t)?0:t;
+function parseDateValue(d){
+  const raw = norm(d["Año"]);
+  if(!raw) return 0;
+
+  const t1 = Date.parse(raw);
+  if(!isNaN(t1)) return t1;
+
+  if(/^\d{4}$/.test(raw)){
+    const t2 = Date.parse(`${raw}-01-01`);
+    if(!isNaN(t2)) return t2;
+  }
+
+  return 0;
+}
+
+function getTitulo(d){
+  return norm(d["Titulo"]) || norm(d["Título"]) || "Documento";
 }
 
 /* ================= LÓGICA ================= */
 function pickTop10(docs){
-  const order=["Vigente","Vigente con observaciones","No clasificado"];
-  const out=[];
-  for(const st of order){
-    docs
-      .filter(d=>norm(d.Estado)===st)
-      .sort((a,b)=>parseDate(b.Año)-parseDate(a.Año))
-      .forEach(d=>{ if(out.length<10) out.push(d); });
-    if(out.length>=10) break;
-  }
-  return out;
+  return [...docs]
+    .sort((a, b) => parseDateValue(b) - parseDateValue(a))
+    .slice(0, 10);
 }
 
 function renderItem(d){
-  const id=norm(d.Identificador);
-  const titulo=norm(d.Título)||norm(d.Titulo)||"Documento";
-  const autores=norm(d.Autores)||"-";
-  const anio=norm(d.Año)||"-";
-  const estado=norm(d.Estado)||"-";
+  const id = norm(d["Identificador"]);
+  const titulo = getTitulo(d);
+  const autores = norm(d["Autores"]) || "-";
+  const anio = norm(d["Año"]) || "-";
+  const estado = norm(d["Estado"]) || "-";
+
   return `
     <div class="item">
       <div class="itemt">
@@ -164,27 +196,39 @@ function renderItem(d){
   `;
 }
 
+async function fetchDocs(url){
+  const res = await fetch(url, { cache: "no-store" });
+  if(!res.ok) throw new Error("No se pudo leer uno de los Google Sheets.");
+  const csv = await res.text();
+  return parseCSV(csv);
+}
+
 /* ================= INIT ================= */
-(async()=>{
-  const list=document.getElementById("latestList");
-  const msg=document.getElementById("latestMsg");
+(async () => {
+  const list = document.getElementById("latestList");
+  const msg = document.getElementById("latestMsg");
+
   try{
-    const res=await fetch(CSV_URL,{cache:"no-store"});
-    if(!res.ok) throw new Error("No se pudo leer el Google Sheet.");
-    const csv=await res.text();
-    const docs=parseCSV(csv);
-    const top=pickTop10(docs);
+    const [aceptados, preprints] = await Promise.all([
+      fetchDocs(CSV_ACEPTADOS_URL),
+      fetchDocs(CSV_PREPRINTS_URL)
+    ]);
+
+    const docs = [...aceptados, ...preprints];
+    const top = pickTop10(docs);
+
     if(!top.length){
-      msg.textContent="No hay artículos disponibles.";
+      msg.textContent = "No hay artículos disponibles.";
       return;
     }
-    list.innerHTML=top.map(renderItem).join("");
+
+    list.innerHTML = top.map(renderItem).join("");
+    msg.textContent = "";
   }catch(e){
-    msg.textContent=e.message;
+    msg.textContent = e.message;
   }
 })();
 </script>
 
 </body>
 </html>
-
