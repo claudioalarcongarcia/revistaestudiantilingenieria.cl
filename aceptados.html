@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Procesados</title>
-  <link rel="stylesheet" href="styles.css?v=20">
+  <title>Artículos aceptados</title>
+  <link rel="stylesheet" href="styles.css?v=25">
 </head>
 
 <body class="app-bg">
@@ -14,8 +14,8 @@
     <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
     <nav class="app-topbar-nav">
       <a class="navbtn" href="index.html">Inicio</a>
-      <a class="navbtn" href="procesados.html">Procesados</a>
-      <a class="navbtn" href="no_procesados.html">No procesados</a>
+      <a class="navbtn" href="aceptados.html">Artículos aceptados</a>
+      <a class="navbtn" href="preprints.html">Preprints</a>
       <a class="navbtn" href="#">Acerca de</a>
     </nav>
   </div>
@@ -23,13 +23,12 @@
 
 <main class="app-shell">
 
-  <!-- Columna izquierda fija -->
   <aside class="app-col app-left">
     <h1 class="app-h1">Menú</h1>
 
     <div class="app-stack">
-      <a class="btn2" href="procesados.html">Procesados</a>
-      <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
+      <a class="btn2" href="aceptados.html">Artículos aceptados</a>
+      <a class="btn2 ghost" href="preprints.html">Preprints</a>
     </div>
 
     <div class="app-links">
@@ -41,15 +40,14 @@
     </div>
   </aside>
 
-  <!-- Columna central: contenido cambia -->
   <section class="app-col app-mid">
 
     <div class="block">
-      <div class="blocktitle">Artículos procesados</div>
+      <div class="blocktitle">Artículos aceptados</div>
 
       <div class="tabs">
-        <button class="tabbtn active" data-estado="Vigente">Vigente</button>
-        <button class="tabbtn" data-estado="Vigente con observaciones">Vigente con observaciones</button>
+        <button class="tabbtn active" data-estado="Aceptado">Aceptado</button>
+        <button class="tabbtn" data-estado="Aceptado con observaciones">Aceptado con observaciones</button>
         <button class="tabbtn" data-estado="No clasificado">No clasificado</button>
         <button class="tabbtn" data-estado="Refutado">Refutado</button>
       </div>
@@ -60,7 +58,6 @@
 
   </section>
 
-  <!-- Columna derecha fija -->
   <aside class="app-col app-right">
     <div class="block">
       <div class="blocktitle">Noticias</div>
@@ -96,13 +93,15 @@
       if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
       if ((c === "\n" || c === "\r") && !inQuotes) {
         if (c === "\r" && n === "\n") i++;
-        row.push(cur); cur = "";
+        row.push(cur);
+        cur = "";
         if (row.some(x => x.trim() !== "")) rows.push(row);
         row = [];
         continue;
       }
       cur += c;
     }
+
     row.push(cur);
     if (row.some(x => x.trim() !== "")) rows.push(row);
 
@@ -114,11 +113,13 @@
     });
   }
 
-  function norm(s){ return (s ?? "").replace(/\s+/g," ").trim(); }
+  function norm(s) {
+    return (s ?? "").replace(/\s+/g, " ").trim();
+  }
 
-  function cardHTML(d){
+  function cardHTML(d) {
     const id = norm(d["Identificador"]);
-    const titulo = norm(d["Titulo"]) || norm(d["Titulo"]) || "Documento";
+    const titulo = norm(d["Titulo"]) || "Documento";
     const autores = norm(d["Autores"]) || "-";
     const anio = norm(d["Año"]) || "-";
     const estado = norm(d["Estado"]) || "-";
@@ -130,7 +131,7 @@
           <a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>
         </div>
         <div class="itemm">${autores} · ${anio} · ${estado} · ID ${id}</div>
-        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener">Abrir PDF</a></div>` : ""}
+        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
       </div>
     `;
   }
@@ -139,15 +140,14 @@
   const msg = document.getElementById("msg");
 
   let all = [];
-  let estadoActual = "Vigente";
+  let estadoActual = "Aceptado";
 
-  function render(){
+  function render() {
     const items = all.filter(d => norm(d["Estado"]) === estadoActual);
     list.innerHTML = items.map(cardHTML).join("");
     msg.textContent = items.length ? "" : "No hay documentos en esta categoría.";
   }
 
-  // tabs
   document.querySelectorAll(".tabbtn").forEach(b => {
     b.addEventListener("click", () => {
       document.querySelectorAll(".tabbtn").forEach(x => x.classList.remove("active"));
@@ -158,15 +158,13 @@
   });
 
   (async () => {
-    try{
+    try {
       const res = await fetch(CSV_URL, { cache: "no-store" });
       if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
       const csv = await res.text();
       all = parseCSV(csv);
-
-      // por defecto muestra Vigente
       render();
-    } catch(e){
+    } catch (e) {
       msg.textContent = e.message;
     }
   })();
