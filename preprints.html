@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>No procesados</title>
+  <title>Preprints</title>
   <link rel="stylesheet" href="styles.css?v=24">
 </head>
 
@@ -15,7 +15,7 @@
     <nav class="app-topbar-nav">
       <a class="navbtn" href="index.html">Inicio</a>
       <a class="navbtn" href="procesados.html">Procesados</a>
-      <a class="navbtn" href="no_procesados.html">No procesados</a>
+      <a class="navbtn" href="no_procesados.html">Preprints</a>
       <a class="navbtn" href="#">Acerca de</a>
     </nav>
   </div>
@@ -28,7 +28,7 @@
 
     <div class="app-stack">
       <a class="btn2" href="procesados.html">Procesados</a>
-      <a class="btn2 ghost" href="no_procesados.html">No procesados</a>
+      <a class="btn2 ghost" href="no_procesados.html">Preprints</a>
     </div>
 
     <div class="app-links">
@@ -42,7 +42,7 @@
 
   <section class="app-col app-mid">
     <div class="block">
-      <div class="blocktitle">Artículos no procesados</div>
+      <div class="blocktitle">Artículos Preprints</div>
 
       <div id="list" class="latest"></div>
       <div id="msg" class="note"></div>
@@ -157,7 +157,7 @@ const msg = document.getElementById("msg");
     const all = parseCSV(csv);
 
     if(!all.length){
-      msg.textContent = "No hay documentos no procesados.";
+      msg.textContent = "No hay documentos Preprints.";
       return;
     }
 
