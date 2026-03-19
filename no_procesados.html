@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>No procesados</title>
-  <link rel="stylesheet" href="styles.css?v=22">
+  <link rel="stylesheet" href="styles.css?v=23">
 </head>
 
 <body class="app-bg">
@@ -110,7 +110,7 @@
 
   function cardHTML(d) {
     const id = norm(d["Identificador"]);
-    const titulo = norm(d["Titulo"]) || norm(d["Titulo"]) || "Documento";
+    const titulo = norm(d["Titulo"]) || "Documento";
     const autores = norm(d["Autores"]) || "-";
     const anio = norm(d["Año"]) || "-";
     const rol = norm(d["Rol"]) || "-";
@@ -126,7 +126,7 @@
         </div>
         <div class="itemm">${autores} · ${anio} · ${rol} · ${estado} · ID ${id || "-"}</div>
         ${doi ? `<div class="itemm">DOI: ${doi}</div>` : ""}
-        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener">Abrir archivo</a></div>` : ""}
+        ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
         <div class="itemm">Citas internas: ${citas}</div>
       </div>
     `;
