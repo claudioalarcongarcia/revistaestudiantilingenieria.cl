@@ -4,11 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artículo</title>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=24">
 </head>
 <body class="app-bg">
 
-  <!-- Barra superior fija -->
   <header class="app-topbar">
     <div class="app-topbar-inner">
       <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
@@ -23,7 +22,6 @@
 
   <main class="app-shell">
 
-    <!-- Izquierda (igual que index) -->
     <aside class="app-col app-left">
       <h1 class="app-h1">Revista Estudiantil de Ingeniería</h1>
 
@@ -40,7 +38,6 @@
       </div>
     </aside>
 
-    <!-- Centro: detalle del artículo -->
     <section class="app-col app-mid">
       <div class="block">
         <div class="blocktitle">Artículo</div>
@@ -61,7 +58,6 @@
       </div>
     </section>
 
-    <!-- Derecha (igual que index) -->
     <aside class="app-col app-right">
       <div class="block">
         <div class="blocktitle">Noticias</div>
@@ -81,9 +77,15 @@
     const params = new URLSearchParams(window.location.search);
     const ID = (params.get("id") || "").trim();
 
-    const SHEET_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+    const SHEET_PROCESADOS_ID = "1xWRo_TaaJT83s4n5f7W4Apt9Da3M2Bd0q-UgcpyPnaE";
+    const SHEET_NO_PROCESADOS_ID = "1qATJ1zbOpkvfCjJJDJShPq7SbxzUdlQQ3GuurtkmmVY";
     const SHEET_NAME = "Hoja 01";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+    const CSV_PROCESADOS_URL =
+      `https://docs.google.com/spreadsheets/d/${SHEET_PROCESADOS_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+    const CSV_NO_PROCESADOS_URL =
+      `https://docs.google.com/spreadsheets/d/${SHEET_NO_PROCESADOS_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
     function parseCSV(text) {
       const rows = [];
@@ -99,15 +101,19 @@
         if (c === '"') { inQuotes = !inQuotes; continue; }
 
         if (c === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
+
         if ((c === "\n" || c === "\r") && !inQuotes) {
           if (c === "\r" && n === "\n") i++;
-          row.push(cur); cur = "";
+          row.push(cur);
+          cur = "";
           if (row.some(x => x.trim() !== "")) rows.push(row);
           row = [];
           continue;
         }
+
         cur += c;
       }
+
       row.push(cur);
       if (row.some(x => x.trim() !== "")) rows.push(row);
 
@@ -119,18 +125,23 @@
       });
     }
 
-    function norm(s){ return (s ?? "").replace(/\s+/g, " ").trim(); }
+    function norm(s) {
+      return (s ?? "").replace(/\s+/g, " ").trim();
+    }
 
-    function splitIds(s){
+    function splitIds(s) {
       const v = norm(s);
       if (!v) return [];
-      // por ahora coma; si usa punto y coma, lo cambiamos aquí
       return v.split(",").map(x => x.trim()).filter(Boolean);
     }
 
-    function itemHTML(d){
+    function getTitulo(d) {
+      return norm(d["Titulo"]) || norm(d["Título"]) || "Documento";
+    }
+
+    function itemHTML(d) {
       const id = norm(d["Identificador"]);
-      const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+      const titulo = getTitulo(d);
       const autores = norm(d["Autores"]) || "-";
       const anio = norm(d["Año"]) || "-";
       const estado = norm(d["Estado"]) || "-";
@@ -143,9 +154,9 @@
       `;
     }
 
-    function articleHTML(d){
+    function articleHTML(d) {
       const id = norm(d["Identificador"]);
-      const titulo = norm(d["Título"]) || norm(d["Titulo"]) || "Documento";
+      const titulo = getTitulo(d);
       const autores = norm(d["Autores"]) || "-";
       const anio = norm(d["Año"]) || "-";
       const rol = norm(d["Rol"]) || "-";
@@ -164,34 +175,42 @@
           <div class="itemm"><b>Estado</b> ${estado}</div>
           <div class="itemm"><b>DOI</b> ${doi}</div>
           <div class="itemm"><b>ID</b> ${id}</div>
-          ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener">Abrir PDF</a></div>` : ""}
+          ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
         </div>
       `;
+    }
+
+    async function fetchDocs(url) {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("No se pudo leer uno de los Google Sheets.");
+      const csv = await res.text();
+      return parseCSV(csv);
     }
 
     (async () => {
       const articleBox = document.getElementById("articleBox");
       const articleMsg = document.getElementById("articleMsg");
-
       const citadoPor = document.getElementById("citadoPor");
       const citadoPorMsg = document.getElementById("citadoPorMsg");
-
       const citaA = document.getElementById("citaA");
       const citaAMsg = document.getElementById("citaAMsg");
 
-      if (!ID){
-        articleMsg.textContent = "Falta parámetro id. Ejemplo: articulo.html?id=100001";
+      if (!ID) {
+        articleMsg.textContent = "Falta parámetro id. Ejemplo: articulo.html?id=00001";
         return;
       }
 
-      try{
-        const res = await fetch(CSV_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("No se pudo leer el Google Sheet (permiso o nombre de hoja).");
-        const csv = await res.text();
-        const docs = parseCSV(csv);
+      try {
+        const [docsProcesados, docsNoProcesados] = await Promise.all([
+          fetchDocs(CSV_PROCESADOS_URL),
+          fetchDocs(CSV_NO_PROCESADOS_URL)
+        ]);
+
+        const docs = [...docsProcesados, ...docsNoProcesados];
 
         const doc = docs.find(d => norm(d["Identificador"]) === ID);
-        if (!doc){
+
+        if (!doc) {
           articleMsg.textContent = `No se encontró el documento con Identificador ${ID}.`;
           return;
         }
@@ -199,9 +218,8 @@
         articleBox.innerHTML = articleHTML(doc);
         articleMsg.textContent = "";
 
-        // CITADO POR: todos los docs cuya Citas_internas contiene ID
         const citantes = docs.filter(d => splitIds(d["Citas_internas"]).includes(ID));
-        if (citantes.length){
+        if (citantes.length) {
           citadoPor.innerHTML = citantes.map(itemHTML).join("");
           citadoPorMsg.textContent = "";
         } else {
@@ -209,13 +227,12 @@
           citadoPorMsg.textContent = "No existen artículos citantes registrados.";
         }
 
-        // CITA A: ids que este doc cita (si existen)
         const citaIds = splitIds(doc["Citas_internas"]);
         const citados = citaIds
           .map(cid => docs.find(d => norm(d["Identificador"]) === cid))
           .filter(Boolean);
 
-        if (citados.length){
+        if (citados.length) {
           citaA.innerHTML = citados.map(itemHTML).join("");
           citaAMsg.textContent = "";
         } else {
@@ -223,7 +240,7 @@
           citaAMsg.textContent = "Este documento no cita artículos internos.";
         }
 
-      } catch(e){
+      } catch (e) {
         articleMsg.textContent = e.message;
       }
     })();
