@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Preprints</title>
-  <link rel="stylesheet" href="styles.css?v=24">
+  <link rel="stylesheet" href="styles.css?v=25">
 </head>
 
 <body class="app-bg">
@@ -14,8 +14,8 @@
     <div class="app-topbar-title">Revista Estudiantil de Ingeniería</div>
     <nav class="app-topbar-nav">
       <a class="navbtn" href="index.html">Inicio</a>
-      <a class="navbtn" href="procesados.html">Procesados</a>
-      <a class="navbtn" href="no_procesados.html">Preprints</a>
+      <a class="navbtn" href="aceptados.html">Artículos aceptados</a>
+      <a class="navbtn" href="preprints.html">Preprints</a>
       <a class="navbtn" href="#">Acerca de</a>
     </nav>
   </div>
@@ -27,8 +27,8 @@
     <h1 class="app-h1">Menú</h1>
 
     <div class="app-stack">
-      <a class="btn2" href="procesados.html">Procesados</a>
-      <a class="btn2 ghost" href="no_procesados.html">Preprints</a>
+      <a class="btn2" href="aceptados.html">Artículos aceptados</a>
+      <a class="btn2 ghost" href="preprints.html">Preprints</a>
     </div>
 
     <div class="app-links">
@@ -42,7 +42,7 @@
 
   <section class="app-col app-mid">
     <div class="block">
-      <div class="blocktitle">Artículos Preprints</div>
+      <div class="blocktitle">Preprints</div>
 
       <div id="list" class="latest"></div>
       <div id="msg" class="note"></div>
@@ -69,63 +69,61 @@ const SHEET_NAME = "Hoja 01";
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 function parseCSV(text){
-  const rows=[];
-  let row=[];
-  let cur="";
-  let inQuotes=false;
+  const rows = [];
+  let row = [];
+  let cur = "";
+  let inQuotes = false;
 
-  for(let i=0;i<text.length;i++){
-    const c=text[i];
-    const n=text[i+1];
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    const n = text[i + 1];
 
-    if(c === '"' && inQuotes && n === '"'){ cur+='"'; i++; continue; }
-    if(c === '"'){ inQuotes=!inQuotes; continue; }
+    if(c === '"' && inQuotes && n === '"'){ cur += '"'; i++; continue; }
+    if(c === '"'){ inQuotes = !inQuotes; continue; }
 
-    if(c === "," && !inQuotes){ row.push(cur); cur=""; continue; }
+    if(c === "," && !inQuotes){ row.push(cur); cur = ""; continue; }
 
     if((c === "\n" || c === "\r") && !inQuotes){
       if(c === "\r" && n === "\n") i++;
       row.push(cur);
-      cur="";
-      if(row.some(x=>x.trim() !== "")) rows.push(row);
-      row=[];
+      cur = "";
+      if(row.some(x => x.trim() !== "")) rows.push(row);
+      row = [];
       continue;
     }
 
-    cur+=c;
+    cur += c;
   }
 
   row.push(cur);
-  if(row.some(x=>x.trim() !== "")) rows.push(row);
+  if(row.some(x => x.trim() !== "")) rows.push(row);
 
-  const headers = rows.shift().map(h=>h.trim());
+  const headers = rows.shift().map(h => h.trim());
 
-  return rows.map(r=>{
-    const obj={};
-    headers.forEach((h,i)=> obj[h] = (r[i] ?? "").trim());
+  return rows.map(r => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (r[i] ?? "").trim());
     return obj;
   });
 }
 
 function norm(s){
-  return (s ?? "").replace(/\s+/g," ").trim();
+  return (s ?? "").replace(/\s+/g, " ").trim();
 }
 
 function cardHTML(d){
-
   const id = norm(d["Identificador"]);
   const titulo = norm(d["Titulo"]) || "Documento";
   const autores = norm(d["Autores"]) || "-";
   const anio = norm(d["Año"]) || "-";
   const rol = norm(d["Rol"]) || "-";
-  const estado = norm(d["Estado"]) || "No procesado";
+  const estado = norm(d["Estado"]) || "Preprint";
   const doi = norm(d["DOI"]);
   const link = norm(d["LINK"]);
   const citas = norm(d["Citas_internas"]) || "0";
 
   return `
     <div class="item">
-
       <div class="itemt">
         ${id ? `<a href="articulo.html?id=${encodeURIComponent(id)}">${titulo}</a>` : titulo}
       </div>
@@ -136,10 +134,9 @@ function cardHTML(d){
 
       ${doi ? `<div class="itemm">DOI: ${doi}</div>` : ""}
 
-      ${link ? `<div class="itemm"><a href="${link}" target="_blank" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
+      ${link ? `<div class="itemm"><a href="${link}" target="_blank" rel="noopener" class="linkpdf">Abrir enlace a PDF</a></div>` : ""}
 
       <div class="itemm">Citas internas: ${citas}</div>
-
     </div>
   `;
 }
@@ -147,23 +144,22 @@ function cardHTML(d){
 const list = document.getElementById("list");
 const msg = document.getElementById("msg");
 
-(async()=>{
-  try{
-
-    const res = await fetch(CSV_URL,{cache:"no-store"});
-    if(!res.ok) throw new Error("No se pudo leer el Google Sheet");
+(async () => {
+  try {
+    const res = await fetch(CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("No se pudo leer el Google Sheet");
 
     const csv = await res.text();
     const all = parseCSV(csv);
 
-    if(!all.length){
-      msg.textContent = "No hay documentos Preprints.";
+    if (!all.length) {
+      msg.textContent = "No hay preprints registrados.";
       return;
     }
 
     list.innerHTML = all.map(cardHTML).join("");
-
-  }catch(e){
+    msg.textContent = "";
+  } catch (e) {
     msg.textContent = e.message;
   }
 })();
